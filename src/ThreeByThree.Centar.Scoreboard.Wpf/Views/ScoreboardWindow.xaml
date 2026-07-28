@@ -26,11 +26,16 @@
             <Grid Margin="80,26,80,8">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Rectangle Width="90"
-                                   Height="90"
+                        <Rectangle Width="102"
+                                   Height="102"
                                    Fill="{StaticResource WhiteBrush}">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform Y="-6" />
+                            </Rectangle.RenderTransform>
                             <Rectangle.OpacityMask>
                                 <ImageBrush ImageSource="pack://application:,,,/Assets/Branding/3x3logo.png"
+                                            Viewbox="16,16,98,98"
+                                            ViewboxUnits="Absolute"
                                             Stretch="Uniform" />
                             </Rectangle.OpacityMask>
                         </Rectangle>
@@ -93,7 +98,11 @@
                                FontWeight="Black"
                                LineHeight="280"
                                Text="{Binding HomeScore}"
-                               TextAlignment="Center" />
+                               TextAlignment="Center">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="23" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
                 </Border>
 
                 <Grid Grid.Row="1" Grid.Column="1">
@@ -128,7 +137,11 @@
                                FontWeight="Black"
                                LineHeight="280"
                                Text="{Binding AwayScore}"
-                               TextAlignment="Center" />
+                               TextAlignment="Center">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="23" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
                 </Border>
 
                 <StackPanel Grid.Row="2"
@@ -150,7 +163,12 @@
                                    Foreground="{Binding HomeFoulColorHex}"
                                    FontSize="74"
                                    FontWeight="Black"
-                                   Text="{Binding HomeFouls}" />
+                                   Text="{Binding HomeFouls}"
+                                   TextAlignment="Center">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform Y="6" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
                     </Border>
                 </StackPanel>
 
@@ -205,7 +223,12 @@
                                    Foreground="{Binding AwayFoulColorHex}"
                                    FontSize="74"
                                    FontWeight="Black"
-                                   Text="{Binding AwayFouls}" />
+                                   Text="{Binding AwayFouls}"
+                                   TextAlignment="Center">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform Y="6" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
                     </Border>
                 </StackPanel>
             </Grid>

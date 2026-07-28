@@ -14,9 +14,14 @@
     <Version>1.0.0</Version>
     <AssemblyName>3x3Centar.Scoreboard</AssemblyName>
     <RootNamespace>ThreeByThree.Centar.Scoreboard.Wpf</RootNamespace>
+    <ApplicationIcon>Assets\Branding\3x3logo.ico</ApplicationIcon>
+    <AssemblyTitle>3x3 Centar Scoreboard</AssemblyTitle>
     <Product>3x3 Centar Scoreboard</Product>
-    <Company>3x3 Centar</Company>
-    <Authors>3x3 Centar</Authors>
+    <Description>Offline 3x3 basketball scoreboard controller and public display</Description>
+    <Company>3X3 Centar</Company>
+    <Authors>3X3 Centar</Authors>
+    <Copyright>Copyright © 3X3 Centar</Copyright>
+    <PackageProjectUrl>https://3x3centar.com</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +32,11 @@
   <ItemGroup>
     <ProjectReference Include="..\ThreeByThree.Centar.Scoreboard.Application\ThreeByThree.Centar.Scoreboard.Application.csproj" />
     <ProjectReference Include="..\ThreeByThree.Centar.Scoreboard.Infrastructure\ThreeByThree.Centar.Scoreboard.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="PublisherWebsite" Value="https://3x3centar.com" />
+    <AssemblyMetadata Include="PublisherEmail" Value="3x3centar@gmail.com" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,8 @@
 
 Branded offline Windows scoreboard software for 3x3 Centar, built with .NET 10, WPF, and MVVM.
 
+Published by **3X3 Centar** — [3x3centar.com](https://3x3centar.com) · [3x3centar@gmail.com](mailto:3x3centar@gmail.com)
+
 The application opens two native windows:
 
 - `ControllerWindow` stays on the operator laptop and owns every score, foul, clock, game, display, and audio command.

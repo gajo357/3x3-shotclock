@@ -1,12 +1,17 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package Id="ThreeByThree.Centar.Scoreboard"
            Name="3x3 Centar Scoreboard"
-           Manufacturer="3x3 Centar"
+           Manufacturer="3X3 Centar"
            Version="$(Version)"
            Scope="perMachine">
 
     <SummaryInformation Description="3x3 Centar offline basketball scoreboard controller and public display" />
     <MediaTemplate EmbedCab="yes" />
+    <Icon Id="AppIcon" SourceFile="$(AppIcon)" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Property Id="ARPURLINFOABOUT" Value="https://3x3centar.com" />
+    <Property Id="ARPCONTACT" Value="3x3centar@gmail.com" />
+    <Property Id="ARPHELPLINK" Value="mailto:3x3centar@gmail.com" />
 
     <Property Id="WINDOWSBUILDNUMBER" Secure="yes">
       <RegistrySearch Id="WindowsBuildNumberSearch"
@@ -31,12 +36,14 @@
                     Name="3x3 Centar Scoreboard"
                     Description="Open the 3x3 Centar scoreboard controller"
                     Target="[INSTALLFOLDER]3x3Centar.Scoreboard.exe"
+                    Icon="AppIcon"
                     WorkingDirectory="INSTALLFOLDER" />
           <Shortcut Id="DesktopShortcut"
                     Directory="DesktopFolder"
                     Name="3x3 Centar Scoreboard"
                     Description="Open the 3x3 Centar scoreboard controller"
                     Target="[INSTALLFOLDER]3x3Centar.Scoreboard.exe"
+                    Icon="AppIcon"
                     WorkingDirectory="INSTALLFOLDER" />
           <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
           <RegistryValue Root="HKCU"

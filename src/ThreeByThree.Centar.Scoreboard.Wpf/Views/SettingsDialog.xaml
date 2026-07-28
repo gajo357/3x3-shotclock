@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Scoreboard settings"
         Width="560"
-        Height="430"
+        Height="560"
         MinWidth="520"
-        MinHeight="400"
+        MinHeight="520"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner">
     <Grid Margin="22">
@@ -70,6 +70,51 @@
                        Text="Audio uses the Windows default output device. Select HDMI or the venue sound system in Windows before play."
                        TextWrapping="Wrap" />
         </StackPanel>
+
+        <Border Grid.Row="4"
+                Margin="0,20,0,0"
+                Padding="14"
+                Background="{StaticResource PanelBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="64" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Rectangle Width="52"
+                           Height="52"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Fill="{StaticResource WhiteBrush}">
+                    <Rectangle.OpacityMask>
+                        <ImageBrush ImageSource="pack://application:,,,/Assets/Branding/3x3logo.png"
+                                    Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Foreground="{StaticResource GreyBrush}"
+                               FontSize="12"
+                               Text="PUBLISHED BY" />
+                    <TextBlock FontSize="19"
+                               FontWeight="Bold"
+                               Text="3X3 Centar" />
+                    <TextBlock Margin="0,4,0,0">
+                        <Hyperlink Foreground="{StaticResource AccentBrush}"
+                                   NavigateUri="https://3x3centar.com"
+                                   RequestNavigate="OnPublisherLinkRequestNavigate">
+                            3x3centar.com
+                        </Hyperlink>
+                        <Run Foreground="{StaticResource DisabledBrush}" Text="  &#x2022;  " />
+                        <Hyperlink Foreground="{StaticResource AccentBrush}"
+                                   NavigateUri="mailto:3x3centar@gmail.com"
+                                   RequestNavigate="OnPublisherLinkRequestNavigate">
+                            3x3centar@gmail.com
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
 
         <StackPanel Grid.Row="5"
                     Margin="0,20,0,0"
