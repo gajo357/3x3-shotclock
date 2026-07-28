@@ -1,0 +1,64 @@
+<Window x:Class="ThreeByThree.Centar.Scoreboard.Wpf.Views.SavedGamesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Saved games"
+        Width="1060"
+        Height="620"
+        MinWidth="820"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock FontSize="26"
+                       FontWeight="Bold"
+                       Text="SAVED GAMES" />
+            <TextBlock Margin="0,4,0,0"
+                       Foreground="{StaticResource GreyBrush}"
+                       Text="Newest matches are shown first. Finished games open on the final screen; unfinished games open paused." />
+        </StackPanel>
+
+        <ListView Grid.Row="1"
+                  Margin="0,16,0,12"
+                  ItemsSource="{Binding Games}"
+                  SelectedItem="{Binding SelectedGame}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="135"
+                                    DisplayMemberBinding="{Binding Date}"
+                                    Header="DATE" />
+                    <GridViewColumn Width="235"
+                                    DisplayMemberBinding="{Binding Match}"
+                                    Header="MATCH" />
+                    <GridViewColumn Width="90"
+                                    DisplayMemberBinding="{Binding Score}"
+                                    Header="SCORE" />
+                    <GridViewColumn Width="125"
+                                    DisplayMemberBinding="{Binding Status}"
+                                    Header="STATUS" />
+                    <GridViewColumn Width="190"
+                                    DisplayMemberBinding="{Binding Tournament}"
+                                    Header="TOURNAMENT" />
+                    <GridViewColumn Width="275"
+                                    DisplayMemberBinding="{Binding MatchId}"
+                                    Header="MATCH ID" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+            <Button Command="{Binding OpenCommand}"
+                    Content="OPEN SELECTED"
+                    IsDefault="True" />
+            <Button Content="CANCEL"
+                    IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</Window>

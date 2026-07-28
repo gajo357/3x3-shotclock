@@ -1,0 +1,18 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputName>3x3Centar.Scoreboard.Setup</OutputName>
+    <OutputType>Package</OutputType>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <Platform>x64</Platform>
+    <Version Condition="'$(Version)' == ''">1.0.0</Version>
+    <PublishDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\artifacts\publish\win-x64'))</PublishDirectory>
+    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\artifacts\installer'))\</OutputPath>
+    <DefineConstants>Version=$(Version);PublishDirectory=$(PublishDirectory)</DefineConstants>
+  </PropertyGroup>
+
+  <Target Name="PublishApplication" BeforeTargets="BeforeBuild">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\..\src\ThreeByThree.Centar.Scoreboard.Wpf\ThreeByThree.Centar.Scoreboard.Wpf.csproj"
+             Targets="Publish"
+             Properties="Configuration=Release;RuntimeIdentifier=win-x64;SelfContained=true;PublishDir=$(PublishDirectory)\;Version=$(Version)" />
+  </Target>
+</Project>

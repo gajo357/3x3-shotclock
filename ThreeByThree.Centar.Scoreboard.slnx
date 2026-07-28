@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ThreeByThree.Centar.Scoreboard.Application/ThreeByThree.Centar.Scoreboard.Application.csproj" />
+    <Project Path="src/ThreeByThree.Centar.Scoreboard.Domain/ThreeByThree.Centar.Scoreboard.Domain.csproj" />
+    <Project Path="src/ThreeByThree.Centar.Scoreboard.Infrastructure/ThreeByThree.Centar.Scoreboard.Infrastructure.csproj" />
+    <Project Path="src/ThreeByThree.Centar.Scoreboard.Wpf/ThreeByThree.Centar.Scoreboard.Wpf.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ThreeByThree.Centar.Scoreboard.Application.Tests/ThreeByThree.Centar.Scoreboard.Application.Tests.csproj" />
+    <Project Path="tests/ThreeByThree.Centar.Scoreboard.Domain.Tests/ThreeByThree.Centar.Scoreboard.Domain.Tests.csproj" />
+    <Project Path="tests/ThreeByThree.Centar.Scoreboard.Infrastructure.Tests/ThreeByThree.Centar.Scoreboard.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

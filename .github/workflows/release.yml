@@ -1,0 +1,104 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, for example 1.0.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}\.nuget\packages
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Resolve release version
+        shell: pwsh
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if ($env:EVENT_NAME -eq "workflow_dispatch") {
+            $version = $env:INPUT_VERSION.Trim()
+            $version = $version.TrimStart("v")
+          }
+          else {
+            $version = $env:REF_NAME.TrimStart("v")
+          }
+
+          if ($version -notmatch "^\d+\.\d+\.\d+$") {
+            throw "Release version '$version' must use the format MAJOR.MINOR.PATCH."
+          }
+
+          "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "RELEASE_TAG=v$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build and test release
+        shell: pwsh
+        run: .\scripts\build-release.ps1 -Version $env:RELEASE_VERSION
+
+      - name: Generate SHA-256 checksums
+        shell: pwsh
+        run: |
+          $assets = @(
+            "artifacts\installer\3x3Centar.Scoreboard.Setup.msi",
+            "artifacts\3x3Centar.Scoreboard-$env:RELEASE_VERSION-win-x64.zip"
+          )
+
+          $checksums = foreach ($asset in $assets) {
+            $hash = Get-FileHash -LiteralPath $asset -Algorithm SHA256
+            "$($hash.Hash.ToLowerInvariant())  $([System.IO.Path]::GetFileName($asset))"
+          }
+
+          $checksums | Set-Content -LiteralPath "artifacts\SHA256SUMS.txt" -Encoding ascii
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $assets = @(
+            "artifacts\installer\3x3Centar.Scoreboard.Setup.msi",
+            "artifacts\3x3Centar.Scoreboard-$env:RELEASE_VERSION-win-x64.zip",
+            "artifacts\SHA256SUMS.txt"
+          )
+
+          gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:RELEASE_TAG $assets `
+              --repo $env:GITHUB_REPOSITORY `
+              --clobber
+          }
+          else {
+            gh release create $env:RELEASE_TAG $assets `
+              --repo $env:GITHUB_REPOSITORY `
+              --target $env:GITHUB_SHA `
+              --title $env:RELEASE_TAG `
+              --generate-notes
+          }
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Publishing GitHub Release $env:RELEASE_TAG failed."
+          }

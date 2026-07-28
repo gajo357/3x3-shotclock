@@ -1,0 +1,543 @@
+<Window x:Class="ThreeByThree.Centar.Scoreboard.Wpf.Views.ControllerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:ThreeByThree.Centar.Scoreboard.Domain.Models;assembly=ThreeByThree.Centar.Scoreboard.Domain"
+        Title="3x3 Centar Scoreboard — Controller"
+        Width="1400"
+        Height="900"
+        MinWidth="1100"
+        MinHeight="720"
+        Foreground="{StaticResource WhiteBrush}"
+        PreviewKeyDown="OnPreviewKeyDown"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style x:Key="ClockAdjustButtonStyle"
+               BasedOn="{StaticResource {x:Type Button}}"
+               TargetType="Button">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="8,3" />
+        </Style>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Padding="14" Background="{StaticResource PanelBrush}">
+            <DockPanel LastChildFill="True">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <TextBlock Margin="0,0,12,0"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource GreyBrush}"
+                               Text="{Binding AudioStatus}" />
+                    <Button Command="{Binding ToggleBlackoutCommand}" Content="BLACKOUT" />
+                    <Button Command="{Binding ToggleScoreboardFullScreenCommand}" Content="TV FULL SCREEN" />
+                    <Button Command="{Binding OpenSettingsCommand}" Content="SETTINGS" />
+                    <Button Command="{Binding OpenSavedGameCommand}" Content="SAVED GAMES" />
+                    <Button Command="{Binding NewGameCommand}" Content="NEW GAME" />
+                </StackPanel>
+                <Rectangle Width="64"
+                           Height="64"
+                           Margin="0,0,16,0"
+                           DockPanel.Dock="Left"
+                           Fill="{StaticResource WhiteBrush}">
+                    <Rectangle.OpacityMask>
+                        <ImageBrush ImageSource="pack://application:,,,/Assets/Branding/3x3logo.png"
+                                    Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+                <StackPanel>
+                    <TextBlock Foreground="{StaticResource AccentBrush}"
+                               FontSize="14"
+                               FontWeight="Black"
+                               Text="3x3 CENTAR" />
+                    <TextBlock FontSize="25"
+                               FontWeight="Bold"
+                               Text="{Binding TournamentName, FallbackValue=3x3 CENTAR}" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,12,0"
+                                   Foreground="{StaticResource DisabledBrush}"
+                                   Text="{Binding ApplicationVersion}" />
+                        <TextBlock Foreground="{StaticResource AccentBrush}"
+                                   FontWeight="Bold"
+                                   Text="{Binding Status}" />
+                        <TextBlock Margin="16,0,0,0"
+                                   Foreground="{StaticResource GreyBrush}"
+                                   Text="{Binding StatusMessage}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Foreground="{StaticResource GreyBrush}"
+                                   Text="{Binding SaveStatus}" />
+                        <TextBlock Margin="10,0,0,0"
+                                   Foreground="{StaticResource DisabledBrush}"
+                                   Text="{Binding CurrentFile}" />
+                    </StackPanel>
+                    <TextBlock Foreground="{StaticResource AccentBrush}"
+                               FontWeight="Bold"
+                               Text="{Binding Possession}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Margin="0,10,0,0"
+                Padding="10"
+                Background="#33FF5252"
+                BorderBrush="{StaticResource AccentBrush}"
+                BorderThickness="1"
+                Visibility="{Binding PendingAlertVisibility}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Command="{Binding StartOvertimeCommand}"
+                            Content="START OVERTIME"
+                            IsEnabled="{Binding CanStartOvertime}" />
+                    <Button Command="{Binding ClearAlertCommand}" Content="DISMISS" />
+                </StackPanel>
+                <TextBlock VerticalAlignment="Center"
+                           FontSize="19"
+                           FontWeight="Bold"
+                           Text="{Binding PendingAlert}" />
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="2" Margin="0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="1.15*" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Border Margin="0,0,6,0"
+                    Padding="8"
+                    Background="{StaticResource BlackBrush}"
+                    CornerRadius="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Border Margin="4"
+                            Background="{StaticResource BlackBrush}"
+                            BorderThickness="0"
+                            CornerRadius="4">
+                        <TextBox HorizontalContentAlignment="Center"
+                                 Margin="0"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 FontSize="32"
+                                 FontWeight="Black"
+                                 Text="{Binding HomeName, UpdateSourceTrigger=PropertyChanged}" />
+                    </Border>
+                    <Border Grid.Row="1"
+                            Margin="4,8"
+                            Background="Transparent"
+                            BorderBrush="{StaticResource WhiteBrush}"
+                            BorderThickness="4"
+                            CornerRadius="4"
+                            Cursor="Hand"
+                            ToolTip="Left-click: +1 point · Right-click: -1 point">
+                        <Border.InputBindings>
+                            <MouseBinding Command="{Binding HomeAddOneCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="LeftClick" />
+                            <MouseBinding Command="{Binding HomeSubtractOneCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="RightClick" />
+                        </Border.InputBindings>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource WhiteBrush}"
+                                   FontSize="150"
+                                   FontWeight="Black"
+                                   Text="{Binding HomeScore}" />
+                    </Border>
+                    <UniformGrid Grid.Row="2" Columns="4">
+                        <Button Command="{Binding HomeAddOneCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="+1" />
+                        <Button Command="{Binding HomeAddTwoCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="+2" />
+                        <Button Command="{Binding HomeSubtractOneCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="-1" />
+                        <Button Command="{Binding HomeSubtractTwoCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="-2" />
+                    </UniformGrid>
+                    <Border Grid.Row="3"
+                            MinHeight="140"
+                            Margin="4,12,4,4"
+                            Padding="20,12"
+                            Background="{StaticResource BlackBrush}"
+                            BorderBrush="{Binding HomeFoulColorHex}"
+                            BorderThickness="4"
+                            CornerRadius="4"
+                            Cursor="Hand"
+                            ToolTip="Left-click: +1 foul · Right-click: -1 foul">
+                        <Border.InputBindings>
+                            <MouseBinding Command="{Binding HomeFoulAddCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="LeftClick" />
+                            <MouseBinding Command="{Binding HomeFoulSubtractCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="RightClick" />
+                        </Border.InputBindings>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Orientation="Vertical">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{Binding HomeFoulColorHex}"
+                                           FontSize="24"
+                                           FontWeight="SemiBold"
+                                           Text="FOULS" />
+                                <TextBlock Margin="0,2,0,0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{Binding HomeFoulColorHex}"
+                                           FontSize="60"
+                                           FontWeight="Black"
+                                           Text="{Binding HomeFouls}" />
+                            </StackPanel>
+                            <TextBlock Grid.Row="1"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource GreyBrush}"
+                                       FontSize="12"
+                                       Text="LEFT CLICK +1  ·  RIGHT CLICK -1" />
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1"
+                    Margin="6,0"
+                    Padding="8"
+                    Background="{StaticResource BlackBrush}"
+                    CornerRadius="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Margin="4"
+                            Padding="12"
+                            Background="{StaticResource BlackBrush}"
+                            BorderThickness="0"
+                            CornerRadius="4"
+                            Cursor="Hand"
+                            ToolTip="Left-click to start or pause both clocks">
+                        <Border.InputBindings>
+                            <MouseBinding Command="{Binding ToggleLinkedClocksCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="LeftClick" />
+                        </Border.InputBindings>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock HorizontalAlignment="Center"
+                                       Foreground="{StaticResource GreyBrush}"
+                                       FontSize="23"
+                                       FontWeight="Bold"
+                                       Text="GAME CLOCK" />
+                            <Viewbox Grid.Row="1"
+                                     Margin="8,0"
+                                     Stretch="Uniform"
+                                     StretchDirection="DownOnly">
+                                <TextBlock Foreground="{StaticResource WhiteBrush}"
+                                           FontSize="136"
+                                           FontWeight="Black"
+                                           Text="{Binding GameClock}" />
+                            </Viewbox>
+                            <TextBlock Grid.Row="2"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource GreyBrush}"
+                                       FontSize="12"
+                                       Text="LEFT CLICK START / PAUSE" />
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Row="1">
+                        <Button Command="{Binding ToggleLinkedClocksCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="{Binding LinkedClockButton}" />
+                        <UniformGrid Columns="7">
+                            <Button Command="{Binding AdjustGameMinusMinuteCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="-1m"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustGameMinusTenCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="-10s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustGameMinusOneCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="-1s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustGamePlusOneCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="+1s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustGamePlusTenCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="+10s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustGamePlusMinuteCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="+1m"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding SetGameClockCommand}"
+                                    Content="SET"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                        </UniformGrid>
+                    </StackPanel>
+
+                    <Border Grid.Row="2"
+                            Margin="4,12,4,4"
+                            Padding="12"
+                            Background="{Binding ShotClockBackgroundHex}"
+                            CornerRadius="4"
+                            Cursor="Hand"
+                            ToolTip="Left-click: start or pause both clocks · Right-click: reset shot clock">
+                        <Border.InputBindings>
+                            <MouseBinding Command="{Binding ToggleLinkedClocksCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="LeftClick" />
+                            <MouseBinding Command="{Binding ResetShotClockCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="RightClick" />
+                        </Border.InputBindings>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock HorizontalAlignment="Center"
+                                       Foreground="{StaticResource BlackBrush}"
+                                       FontSize="23"
+                                       FontWeight="Bold"
+                                       Text="SHOT CLOCK" />
+                            <Viewbox Grid.Row="1"
+                                     Margin="8,0"
+                                     Stretch="Uniform"
+                                     StretchDirection="DownOnly">
+                                <TextBlock Foreground="{StaticResource BlackBrush}"
+                                           FontSize="122"
+                                           FontWeight="Black"
+                                           Text="{Binding ShotClock}" />
+                            </Viewbox>
+                            <TextBlock Grid.Row="2"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource BlackBrush}"
+                                       FontSize="12"
+                                       Opacity="0.72"
+                                       Text="LEFT START / PAUSE  ·  RIGHT RESET" />
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Row="3">
+                        <UniformGrid Columns="2">
+                            <Button Command="{Binding ResetShotClockCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Background="{StaticResource AccentBrush}"
+                                    Content="RESET SHOT · 12" />
+                            <Button Command="{Binding ResetAndPauseClocksCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="RESET SHOT + PAUSE" />
+                        </UniformGrid>
+                        <UniformGrid Columns="5">
+                            <Button Command="{Binding AdjustShotMinusFiveCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="-5s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustShotMinusOneCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="-1s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustShotPlusOneCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="+1s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding AdjustShotPlusFiveCommand}"
+                                    CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                    Content="+5s"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                            <Button Command="{Binding SetShotClockCommand}"
+                                    Content="SET"
+                                    Style="{StaticResource ClockAdjustButtonStyle}" />
+                        </UniformGrid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2"
+                    Margin="6,0,0,0"
+                    Padding="8"
+                    Background="{StaticResource BlackBrush}"
+                    CornerRadius="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Border Margin="4"
+                            Background="{StaticResource BlackBrush}"
+                            BorderThickness="0"
+                            CornerRadius="4">
+                        <TextBox HorizontalContentAlignment="Center"
+                                 Margin="0"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 FontSize="32"
+                                 FontWeight="Black"
+                                 Text="{Binding AwayName, UpdateSourceTrigger=PropertyChanged}" />
+                    </Border>
+                    <Border Grid.Row="1"
+                            Margin="4,8"
+                            Background="Transparent"
+                            BorderBrush="{StaticResource WhiteBrush}"
+                            BorderThickness="4"
+                            CornerRadius="4"
+                            Cursor="Hand"
+                            ToolTip="Left-click: +1 point · Right-click: -1 point">
+                        <Border.InputBindings>
+                            <MouseBinding Command="{Binding AwayAddOneCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="LeftClick" />
+                            <MouseBinding Command="{Binding AwaySubtractOneCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="RightClick" />
+                        </Border.InputBindings>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource WhiteBrush}"
+                                   FontSize="150"
+                                   FontWeight="Black"
+                                   Text="{Binding AwayScore}" />
+                    </Border>
+                    <UniformGrid Grid.Row="2" Columns="4">
+                        <Button Command="{Binding AwayAddOneCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="+1" />
+                        <Button Command="{Binding AwayAddTwoCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="+2" />
+                        <Button Command="{Binding AwaySubtractOneCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="-1" />
+                        <Button Command="{Binding AwaySubtractTwoCommand}"
+                                CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                Content="-2" />
+                    </UniformGrid>
+                    <Border Grid.Row="3"
+                            MinHeight="140"
+                            Margin="4,12,4,4"
+                            Padding="20,12"
+                            Background="{StaticResource BlackBrush}"
+                            BorderBrush="{Binding AwayFoulColorHex}"
+                            BorderThickness="4"
+                            CornerRadius="4"
+                            Cursor="Hand"
+                            ToolTip="Left-click: +1 foul · Right-click: -1 foul">
+                        <Border.InputBindings>
+                            <MouseBinding Command="{Binding AwayFoulAddCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="LeftClick" />
+                            <MouseBinding Command="{Binding AwayFoulSubtractCommand}"
+                                          CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                                          MouseAction="RightClick" />
+                        </Border.InputBindings>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Orientation="Vertical">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{Binding AwayFoulColorHex}"
+                                           FontSize="24"
+                                           FontWeight="SemiBold"
+                                           Text="FOULS" />
+                                <TextBlock Margin="0,2,0,0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{Binding AwayFoulColorHex}"
+                                           FontSize="60"
+                                           FontWeight="Black"
+                                           Text="{Binding AwayFouls}" />
+                            </StackPanel>
+                            <TextBlock Grid.Row="1"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource GreyBrush}"
+                                       FontSize="12"
+                                       Text="LEFT CLICK +1  ·  RIGHT CLICK -1" />
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="3" Padding="10" Background="{StaticResource PanelBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding ApplyTeamsCommand}" Content="APPLY TEAMS" />
+                    <Button Command="{Binding SwapTeamsCommand}" Content="SWAP" />
+                    <Button Command="{Binding UndoCommand}"
+                            CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                            Content="UNDO" />
+                    <Button Command="{Binding ManualBuzzerCommand}"
+                            CommandParameter="{x:Static models:CommandSource.ControllerButton}"
+                            Background="{StaticResource AccentBrush}"
+                            Content="BUZZER" />
+                    <Button Command="{Binding EndGameCommand}" Content="END GAME" />
+                    <Button Command="{Binding ShowHistoryCommand}" Content="HISTORY" />
+                    <Button Command="{Binding ExportGameCommand}" Content="EXPORT" />
+                    <Button Command="{Binding OpenGamesFolderCommand}" Content="GAMES FOLDER" />
+                </StackPanel>
+                <TextBlock Grid.Column="1"
+                           Margin="12,0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource GreyBrush}"
+                           Text="Space start/pause · R reset shot · B buzzer · Ctrl+Z undo" />
+                <ItemsControl Grid.Column="2"
+                              Height="72"
+                              ItemsSource="{Binding RecentEvents}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Foreground="{StaticResource GreyBrush}" Text="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

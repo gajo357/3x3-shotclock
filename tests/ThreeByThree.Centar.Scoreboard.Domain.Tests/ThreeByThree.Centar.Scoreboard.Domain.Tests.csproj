@@ -1,0 +1,10 @@
+<Project Sdk="MSTest.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ThreeByThree.Centar.Scoreboard.Domain\ThreeByThree.Centar.Scoreboard.Domain.csproj" />
+  </ItemGroup>
+</Project>

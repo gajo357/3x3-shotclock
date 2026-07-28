@@ -1,0 +1,27 @@
+<Window x:Class="ThreeByThree.Centar.Scoreboard.Wpf.Views.GameHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Full event history"
+        Width="760"
+        Height="620"
+        MinWidth="600"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock FontSize="26" FontWeight="Bold" Text="MATCH EVENT HISTORY" />
+        <ListBox Grid.Row="1"
+                 Margin="0,16,0,12"
+                 FontSize="14"
+                 ItemsSource="{Binding}" />
+        <Button Grid.Row="2"
+                HorizontalAlignment="Right"
+                Click="OnClose"
+                Content="CLOSE"
+                IsCancel="True" />
+    </Grid>
+</Window>
