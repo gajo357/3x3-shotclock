@@ -115,3 +115,9 @@ logs, and completed games are not orphaned by the rename.
 - [Architecture and persistence](docs/ARCHITECTURE.md)
 - [Operator guide and keyboard map](docs/OPERATOR_GUIDE.md)
 - [Acceptance checklist](docs/ACCEPTANCE_CHECKLIST.md)
+
+## License
+
+3x3 Centar Scoreboard is completely free to download, use, copy, modify,
+and distribute for any purpose, including commercial use. It is released
+under the [Zero-Clause BSD license](LICENSE).
