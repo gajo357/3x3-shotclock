@@ -1,9 +1,9 @@
-Copyright (c) 2011, Admix Designs (http://www.admixdesigns.com/),
-with Reserved Font Names "Squada" and "Squada One"
+Copyright 2020 The Saira Project Authors (https://github.com/Omnibus-Type/Saira)
+
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
-http://scripts.sil.org/OFL
+https://scripts.sil.org/OFL
 
 
 -----------------------------------------------------------
@@ -37,8 +37,8 @@ copyright statement(s).
 "Original Version" refers to the collection of Font Software components as
 distributed by the Copyright Holder(s).
 
-"Modified Version" refers to any derivative made by adding to, deleting, or
-substituting -- in part or in whole -- any of the components of the
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
 Original Version, by changing formats or by porting the Font Software to a
 new environment.
 
@@ -74,13 +74,13 @@ permission.
 
 5) The Font Software, modified or unmodified, in part or in whole,
 must be distributed entirely under this license, and must not be
-distributed under any other license. The requirement for fonts to remain
-under this license does not apply to any document created using the Font
-Software.
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
 
 TERMINATION
-This license becomes null and void if any of the above conditions are not
-met.
+This license becomes null and void if any of the above conditions are
+not met.
 
 DISCLAIMER
 THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,

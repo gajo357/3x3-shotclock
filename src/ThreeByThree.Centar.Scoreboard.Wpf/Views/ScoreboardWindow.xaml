@@ -15,7 +15,6 @@
         <Grid Width="1920"
               Height="1080"
               Background="{StaticResource BlackBrush}"
-              TextElement.FontFamily="{StaticResource ScoreboardFontFamily}"
               TextElement.Foreground="{StaticResource WhiteBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="180" />
@@ -23,29 +22,24 @@
                 <RowDefinition Height="160" />
             </Grid.RowDefinitions>
 
-            <Grid Margin="80,26,80,8">
+            <Grid Margin="80,4">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <Rectangle Width="102"
-                                   Height="102"
+                        <Rectangle Width="130"
+                                   Height="130"
                                    Fill="{StaticResource WhiteBrush}">
-                            <Rectangle.RenderTransform>
-                                <TranslateTransform Y="-6" />
-                            </Rectangle.RenderTransform>
                             <Rectangle.OpacityMask>
                                 <ImageBrush ImageSource="pack://application:,,,/Assets/Branding/3x3logo.png"
-                                            Viewbox="16,16,98,98"
-                                            ViewboxUnits="Absolute"
                                             Stretch="Uniform" />
                             </Rectangle.OpacityMask>
                         </Rectangle>
-                        <TextBlock Margin="24,0,0,0"
+                        <TextBlock Margin="8,0,0,0"
                                    VerticalAlignment="Center"
                                    FontSize="54"
                                    FontWeight="Black"
                                    Text="3X3 CENTAR" />
                     </StackPanel>
-                    <TextBlock Margin="0,10,0,0"
+                    <TextBlock Margin="0,4,0,0"
                                HorizontalAlignment="Center"
                                FontSize="28"
                                FontWeight="SemiBold"
@@ -69,18 +63,20 @@
                     <ColumnDefinition Width="540" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Margin="30,0,42,0"
+                <TextBlock Margin="36,0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
+                           FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                            FontSize="58"
                            FontWeight="Black"
                            Text="{Binding HomeName}"
                            TextAlignment="Center"
                            TextTrimming="CharacterEllipsis" />
                 <TextBlock Grid.Column="2"
-                           Margin="42,0,30,0"
+                           Margin="36,0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
+                           FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                            FontSize="58"
                            FontWeight="Black"
                            Text="{Binding AwayName}"
@@ -88,12 +84,13 @@
                            TextTrimming="CharacterEllipsis" />
 
                 <Border Grid.Row="1"
-                        Margin="30,0,42,0"
+                        Margin="36,0"
                         BorderBrush="{StaticResource WhiteBrush}"
                         BorderThickness="6"
                         CornerRadius="4">
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
+                               FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                                FontSize="270"
                                FontWeight="Black"
                                LineHeight="280"
@@ -112,6 +109,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Bottom"
+                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="30"
                                FontWeight="SemiBold"
                                Foreground="{StaticResource GreyBrush}"
@@ -119,20 +117,22 @@
                     <TextBlock Grid.Row="1"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
+                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="164"
-                               FontWeight="Black"
+                               FontWeight="Bold"
                                Text="{Binding GameClock}"
                                TextAlignment="Center" />
                 </Grid>
 
                 <Border Grid.Row="1"
                         Grid.Column="2"
-                        Margin="42,0,30,0"
+                        Margin="36,0"
                         BorderBrush="{StaticResource WhiteBrush}"
                         BorderThickness="6"
                         CornerRadius="4">
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
+                               FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                                FontSize="270"
                                FontWeight="Black"
                                LineHeight="280"
@@ -145,9 +145,10 @@
                 </Border>
 
                 <StackPanel Grid.Row="2"
-                            Margin="30,18,42,0"
+                            Margin="36,18,36,0"
                             HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center"
+                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="30"
                                FontWeight="SemiBold"
                                Foreground="{Binding HomeFoulColorHex}"
@@ -161,8 +162,9 @@
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Foreground="{Binding HomeFoulColorHex}"
+                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="74"
-                                   FontWeight="Black"
+                                   FontWeight="Bold"
                                    Text="{Binding HomeFouls}"
                                    TextAlignment="Center">
                             <TextBlock.RenderTransform>
@@ -188,6 +190,7 @@
                         </Grid.RowDefinitions>
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Bottom"
+                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="30"
                                    FontWeight="Bold"
                                    Foreground="Black"
@@ -195,8 +198,9 @@
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
+                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="122"
-                                   FontWeight="Black"
+                                   FontWeight="Bold"
                                    Foreground="Black"
                                    Text="{Binding ShotClock}"
                                    TextAlignment="Center" />
@@ -205,9 +209,10 @@
 
                 <StackPanel Grid.Row="2"
                             Grid.Column="2"
-                            Margin="42,18,30,0"
+                            Margin="36,18,36,0"
                             HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center"
+                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="30"
                                FontWeight="SemiBold"
                                Foreground="{Binding AwayFoulColorHex}"
@@ -221,8 +226,9 @@
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Foreground="{Binding AwayFoulColorHex}"
+                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="74"
-                                   FontWeight="Black"
+                                   FontWeight="Bold"
                                    Text="{Binding AwayFouls}"
                                    TextAlignment="Center">
                             <TextBlock.RenderTransform>

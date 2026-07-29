@@ -42,8 +42,13 @@
   <ItemGroup>
     <Resource Include="Assets\Branding\3x3logo.png" />
     <Resource Include="Assets\Fonts\*.ttf" />
-    <Content Include="Assets\Fonts\SquadaOne-OFL.txt">
-      <Link>licenses\SquadaOne-OFL.txt</Link>
+    <Content Include="Assets\Fonts\Saira-OFL.txt">
+      <Link>licenses\Saira-OFL.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Assets\Fonts\Rajdhani-OFL.txt">
+      <Link>licenses\Rajdhani-OFL.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

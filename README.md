@@ -122,6 +122,6 @@ logs, and completed games are not orphaned by the rename.
 and distribute for any purpose, including commercial use. It is released
 under the [Zero-Clause BSD license](LICENSE).
 
-The bundled Squada One and Roboto Condensed typefaces are distributed
+The bundled Saira, Rajdhani, and Roboto Condensed typefaces are distributed
 under the SIL Open Font License 1.1. Their license notices are included
 with the [font assets](src/ThreeByThree.Centar.Scoreboard.Wpf/Assets/Fonts).
