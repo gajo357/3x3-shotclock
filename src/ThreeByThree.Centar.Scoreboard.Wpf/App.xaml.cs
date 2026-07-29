@@ -8,6 +8,7 @@ using ThreeByThree.Centar.Scoreboard.Application.Display;
 using ThreeByThree.Centar.Scoreboard.Application.Operations;
 using ThreeByThree.Centar.Scoreboard.Application.Persistence;
 using ThreeByThree.Centar.Scoreboard.Application.Settings;
+using ThreeByThree.Centar.Scoreboard.Application.Tournaments;
 using ThreeByThree.Centar.Scoreboard.Domain;
 using ThreeByThree.Centar.Scoreboard.Infrastructure.Diagnostics;
 using ThreeByThree.Centar.Scoreboard.Infrastructure.Operations;
@@ -46,6 +47,7 @@ public partial class App : System.Windows.Application
             services.AddSingleton<IMonitorService, MonitorService>();
             services.AddSingleton(GameStoragePaths.ForCurrentUser());
             services.AddSingleton<IGameStore, JsonGameStore>();
+            services.AddSingleton<ITournamentStore, JsonTournamentStore>();
             services.AddSingleton<IMatchPersistenceService, MatchPersistenceService>();
             services.AddSingleton<ISettingsStore, JsonSettingsStore>();
             services.AddSingleton<IAppSettingsService, AppSettingsService>();

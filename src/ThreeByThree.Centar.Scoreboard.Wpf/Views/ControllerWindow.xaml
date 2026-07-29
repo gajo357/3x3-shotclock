@@ -38,6 +38,7 @@
                     <Button Command="{Binding ToggleBlackoutCommand}" Content="BLACKOUT" />
                     <Button Command="{Binding ToggleScoreboardFullScreenCommand}" Content="TV FULL SCREEN" />
                     <Button Command="{Binding OpenSettingsCommand}" Content="SETTINGS" />
+                    <Button Command="{Binding ManageTournamentsCommand}" Content="TOURNAMENTS" />
                     <Button Command="{Binding OpenSavedGameCommand}" Content="SAVED GAMES" />
                     <Button Command="{Binding NewGameCommand}" Content="NEW GAME" />
                 </StackPanel>

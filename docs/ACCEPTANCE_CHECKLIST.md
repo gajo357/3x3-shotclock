@@ -42,6 +42,9 @@ Perform these checks on the exact tournament laptop, HDMI chain, display, and au
   game-clock, shot-clock expiry, and five-second warning patterns.
 - [ ] Run a complete regulation game including resets, adjustments, penalties, winning alert, and finalization.
 - [ ] Run a tied regulation game through overtime.
+- [ ] Create a tournament, add at least two teams, and verify it remains available after restarting the app.
+- [ ] Add teams and players with a mix of present and omitted images; verify imported images and roster ownership after restarting.
+- [ ] Create games by selecting tournament teams for every game type. Verify numeric group `1`/`20`, alphabetic group `A`/`Z`, and the type/group label beneath the public-display logo.
 - [ ] Kill the process while both clocks run; relaunch and verify paused recovery within the most recent one-second snapshot.
 - [ ] Confirm Windows does not sleep or turn off the display while a game is active.
 - [ ] Upgrade from the previous MSI and confirm settings and saved games remain.

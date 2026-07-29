@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using ThreeByThree.Centar.Scoreboard.Application;
 using ThreeByThree.Centar.Scoreboard.Application.Persistence;
 using ThreeByThree.Centar.Scoreboard.Application.Settings;
@@ -115,6 +116,128 @@ public sealed class JsonGameStoreTests
         Assert.AreEqual(TeamSide.Home, replayed.StartingPossession);
         Assert.AreEqual(MatchStage.Overtime, replayed.Stage);
         Assert.AreEqual(loaded.Snapshot.LastEventSequence, replayed.LastEventSequence);
+    }
+
+    [TestMethod]
+    public async Task SaveThenLoad_TournamentLinkAndGroupClassification_RoundTripsAndReplays()
+    {
+        var tournamentId = Guid.NewGuid();
+        var homeTeamId = Guid.NewGuid();
+        var awayTeamId = Guid.NewGuid();
+        var metadata = new MatchMetadata
+        {
+            TournamentId = tournamentId,
+            TournamentName = "City Cup",
+            HomeTeamId = homeTeamId,
+            AwayTeamId = awayTeamId,
+            CourtName = "Center Court",
+            Category = "Under 18",
+            GameType = GameType.Group,
+            Group = "Z",
+        };
+        using var session = CreateSession(metadata);
+        Assert.IsTrue(session.Execute(
+            new AdjustScoreCommand(TeamSide.Home, 2)).IsAccepted);
+        var document = Capture(session);
+
+        await store.SaveActiveAsync(document);
+        var loaded = await store.LoadGameAsync(document.GameId);
+
+        Assert.IsNotNull(loaded);
+        var createdEvent = Assert.ContainsSingle(
+            loaded.Events.OfType<GameCreatedEvent>());
+        Assert.AreEqual(metadata, createdEvent.MatchMetadata);
+        Assert.AreEqual(metadata, loaded.Snapshot.Metadata);
+        Assert.AreEqual(tournamentId, loaded.Snapshot.Metadata.TournamentId);
+        Assert.AreEqual(homeTeamId, loaded.Snapshot.Metadata.HomeTeamId);
+        Assert.AreEqual(awayTeamId, loaded.Snapshot.Metadata.AwayTeamId);
+        Assert.AreEqual(GameType.Group, loaded.Snapshot.Metadata.GameType);
+        Assert.AreEqual("Z", loaded.Snapshot.Metadata.Group);
+        Assert.AreEqual("Home", loaded.Snapshot.Home.Name);
+        Assert.AreEqual("#FFFFFF", loaded.Snapshot.Home.ColorHex);
+        Assert.AreEqual(2, loaded.Snapshot.Home.Score);
+        Assert.AreEqual("Away", loaded.Snapshot.Away.Name);
+        Assert.AreEqual("#FF5252", loaded.Snapshot.Away.ColorHex);
+
+        var replayed = MatchReducer.Replay(loaded.Events);
+
+        Assert.AreEqual(metadata, replayed.Metadata);
+        Assert.AreEqual(homeTeamId, replayed.Metadata.HomeTeamId);
+        Assert.AreEqual(awayTeamId, replayed.Metadata.AwayTeamId);
+        Assert.AreEqual(2, replayed.Home.Score);
+        Assert.AreEqual(loaded.Snapshot.LastEventSequence, replayed.LastEventSequence);
+    }
+
+    [TestMethod]
+    public async Task LoadGame_LegacyJsonWithoutTournamentTeamIdsGameTypeOrGroup_LoadsWithDefaults()
+    {
+        var metadata = new MatchMetadata
+        {
+            TournamentId = Guid.NewGuid(),
+            TournamentName = "Legacy Cup",
+            HomeTeamId = Guid.NewGuid(),
+            AwayTeamId = Guid.NewGuid(),
+            CourtName = "Legacy Court",
+            Category = "Under 18",
+            GameType = GameType.Group,
+            Group = "A",
+        };
+        using var session = CreateSession(metadata);
+        Assert.IsTrue(session.Execute(
+            new AdjustScoreCommand(TeamSide.Away, 1)).IsAccepted);
+        var document = Capture(session);
+        var path = await store.SaveActiveAsync(document);
+        await StripNewMatchMetadataAsync(path);
+
+        var loaded = await store.LoadGameAsync(document.GameId);
+
+        Assert.IsNotNull(loaded);
+        Assert.IsNull(loaded.Snapshot.Metadata.TournamentId);
+        Assert.IsNull(loaded.Snapshot.Metadata.HomeTeamId);
+        Assert.IsNull(loaded.Snapshot.Metadata.AwayTeamId);
+        Assert.AreEqual(GameType.Unspecified, loaded.Snapshot.Metadata.GameType);
+        Assert.AreEqual(string.Empty, loaded.Snapshot.Metadata.Group);
+        Assert.AreEqual("Legacy Cup", loaded.Snapshot.Metadata.TournamentName);
+        Assert.AreEqual("UNDER 18", loaded.Snapshot.Metadata.GetGameTypeLabel());
+        Assert.AreEqual("Home", loaded.Snapshot.Home.Name);
+        Assert.AreEqual("Away", loaded.Snapshot.Away.Name);
+        Assert.AreEqual(1, loaded.Snapshot.Away.Score);
+        Assert.AreEqual(MatchStage.Regular, loaded.Snapshot.Stage);
+
+        var replayed = MatchReducer.Replay(loaded.Events);
+
+        Assert.AreEqual(loaded.Snapshot.Metadata, replayed.Metadata);
+        Assert.AreEqual(loaded.Snapshot.GameId, replayed.GameId);
+        Assert.AreEqual(1, replayed.Away.Score);
+        Assert.AreEqual(loaded.Snapshot.LastEventSequence, replayed.LastEventSequence);
+    }
+
+    [TestMethod]
+    public async Task ListGames_NewOptionalMetadataMissing_DoesNotSkipLegacyGame()
+    {
+        var metadata = new MatchMetadata
+        {
+            TournamentId = Guid.NewGuid(),
+            TournamentName = "Legacy Listed Cup",
+            HomeTeamId = Guid.NewGuid(),
+            AwayTeamId = Guid.NewGuid(),
+            Category = "Qualifier",
+            GameType = GameType.Qualifier,
+        };
+        using var session = CreateSession(metadata);
+        var document = Capture(session);
+        var path = await store.SaveActiveAsync(document);
+        await StripNewMatchMetadataAsync(path);
+
+        var games = await store.ListGamesAsync();
+
+        var game = Assert.ContainsSingle(games);
+        Assert.AreEqual(document.GameId, game.GameId);
+        Assert.AreEqual("Legacy Listed Cup", game.TournamentName);
+        Assert.AreEqual("Home", game.HomeName);
+        Assert.AreEqual("Away", game.AwayName);
+        Assert.AreEqual(MatchStage.Regular, game.Stage);
+        Assert.AreEqual(path, game.FilePath);
     }
 
     [TestMethod]
@@ -327,6 +450,39 @@ public sealed class JsonGameStoreTests
     }
 
     [TestMethod]
+    public async Task ListGames_TamperedMatchMetadata_SkipsInvalidDocument()
+    {
+        var metadata = new MatchMetadata
+        {
+            TournamentId = Guid.NewGuid(),
+            TournamentName = "Integrity Cup",
+            HomeTeamId = Guid.NewGuid(),
+            AwayTeamId = Guid.NewGuid(),
+            GameType = GameType.Group,
+            Group = "A",
+        };
+        using var session = CreateSession(metadata);
+        var document = Capture(session) with
+        {
+            Snapshot = session.Snapshot with
+            {
+                Metadata = session.Snapshot.Metadata with
+                {
+                    AwayTeamId = Guid.NewGuid(),
+                    Group = "B",
+                },
+            },
+        };
+        await store.SaveActiveAsync(document);
+
+        var games = await store.ListGamesAsync();
+        var loaded = await store.LoadGameAsync(document.GameId);
+
+        Assert.IsEmpty(games);
+        Assert.IsNull(loaded);
+    }
+
+    [TestMethod]
     public async Task ListGames_MissingEventSequence_SkipsInvalidDocument()
     {
         using var session = CreateSession();
@@ -418,4 +574,27 @@ public sealed class JsonGameStoreTests
             session.Snapshot,
             session.History,
             DateTimeOffset.UtcNow);
+
+    private static async Task StripNewMatchMetadataAsync(string path)
+    {
+        var json = await File.ReadAllTextAsync(path);
+        var root = JsonNode.Parse(json)?.AsObject()
+            ?? throw new InvalidDataException("The saved game JSON could not be parsed.");
+        var snapshotMetadata = root["snapshot"]?["metadata"]?.AsObject()
+            ?? throw new InvalidDataException("Snapshot metadata was not found.");
+        var createdMetadata = root["events"]?[0]?["matchMetadata"]?.AsObject()
+            ?? throw new InvalidDataException("Created-event metadata was not found.");
+        RemoveNewMetadata(snapshotMetadata);
+        RemoveNewMetadata(createdMetadata);
+        await File.WriteAllTextAsync(path, root.ToJsonString());
+    }
+
+    private static void RemoveNewMetadata(JsonObject metadata)
+    {
+        _ = metadata.Remove("tournamentId");
+        _ = metadata.Remove("homeTeamId");
+        _ = metadata.Remove("awayTeamId");
+        _ = metadata.Remove("gameType");
+        _ = metadata.Remove("group");
+    }
 }

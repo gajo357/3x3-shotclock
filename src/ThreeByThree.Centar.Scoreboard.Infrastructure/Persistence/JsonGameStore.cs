@@ -296,9 +296,7 @@ public sealed class JsonGameStore(GameStoragePaths paths) : IGameStore
             replayed.Away.Fouls != document.Snapshot.Away.Fouls ||
             replayed.Stage != document.Snapshot.Stage ||
             replayed.StartingPossession != document.Snapshot.StartingPossession ||
-            replayed.Metadata.CoinTossWinner != document.Snapshot.Metadata.CoinTossWinner ||
-            replayed.Metadata.CoinTossSelection !=
-            document.Snapshot.Metadata.CoinTossSelection)
+            replayed.Metadata != document.Snapshot.Metadata)
         {
             throw new InvalidDataException(
                 "The active game snapshot does not match its event stream.");

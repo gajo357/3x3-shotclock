@@ -3,8 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:models="clr-namespace:ThreeByThree.Centar.Scoreboard.Domain.Models;assembly=ThreeByThree.Centar.Scoreboard.Domain"
         Title="New game"
-        Width="620"
-        Height="780"
+        Width="660"
+        Height="800"
+        Background="{StaticResource BlackBrush}"
+        Foreground="{StaticResource WhiteBrush}"
+        FontFamily="{StaticResource AppFontFamily}"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner">
@@ -17,7 +20,7 @@
 
         <TextBlock FontSize="28"
                    FontWeight="Bold"
-                   Text="PREPARE NEW GAME" />
+                   Text="PREPARE TOURNAMENT GAME" />
 
         <ScrollViewer Grid.Row="1"
                       Margin="0,16"
@@ -40,65 +43,97 @@
 
                 <StackPanel Grid.ColumnSpan="2">
                     <Label Content="Tournament" />
-                    <TextBox Text="{Binding TournamentName, UpdateSourceTrigger=PropertyChanged}" />
+                    <ComboBox ItemsSource="{Binding Tournaments}"
+                              DisplayMemberPath="Name"
+                              SelectedItem="{Binding SelectedTournament}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1">
+                    <Label Content="Game type" />
+                    <ComboBox ItemsSource="{Binding GameTypes}"
+                              DisplayMemberPath="Label"
+                              SelectedItem="{Binding SelectedGameType}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsGroupGame}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <Label Content="Group (for group games)" />
+                    <ComboBox ItemsSource="{Binding Groups}"
+                              SelectedItem="{Binding SelectedGroup}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2">
                     <Label Content="Scheduled game ID" />
                     <TextBox Text="{Binding ScheduledGameId, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="1">
+                <StackPanel Grid.Row="2" Grid.Column="1">
                     <Label Content="Court" />
                     <TextBox Text="{Binding CourtName, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
-                    <Label Content="Category" />
+                <StackPanel Grid.Row="3" Grid.ColumnSpan="2">
+                    <Label Content="Category (optional)" />
                     <TextBox Text="{Binding Category, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="3">
+                <StackPanel Grid.Row="4">
                     <Label Content="Scheduled date (optional)" />
                     <DatePicker SelectedDate="{Binding ScheduledDate}" />
                 </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="1">
+                <StackPanel Grid.Row="4" Grid.Column="1">
                     <Label Content="Scheduled time (HH:mm, optional)" />
                     <TextBox Text="{Binding ScheduledTime, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
-                <GroupBox Grid.Row="4"
+                <GroupBox Grid.Row="5"
                           Margin="4,14,4,4"
                           Padding="12"
                           Header="HOME TEAM"
                           Foreground="{StaticResource WhiteBrush}">
                     <StackPanel>
-                        <TextBox Text="{Binding HomeName, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox Text="{Binding HomeColorHex, UpdateSourceTrigger=PropertyChanged}" />
+                        <ComboBox ItemsSource="{Binding SelectedTournament.Teams}"
+                                  DisplayMemberPath="Name"
+                                  SelectedItem="{Binding SelectedHomeTeam}" />
+                        <TextBlock Margin="8,8,8,0"
+                                   Foreground="{Binding SelectedHomeTeam.ColorHex}"
+                                   Text="{Binding SelectedHomeTeam.ColorHex}" />
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Grid.Row="4"
+                <GroupBox Grid.Row="5"
                           Grid.Column="1"
                           Margin="4,14,4,4"
                           Padding="12"
                           Header="AWAY TEAM"
                           Foreground="{StaticResource WhiteBrush}">
                     <StackPanel>
-                        <TextBox Text="{Binding AwayName, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox Text="{Binding AwayColorHex, UpdateSourceTrigger=PropertyChanged}" />
+                        <ComboBox ItemsSource="{Binding SelectedTournament.Teams}"
+                                  DisplayMemberPath="Name"
+                                  SelectedItem="{Binding SelectedAwayTeam}" />
+                        <TextBlock Margin="8,8,8,0"
+                                   Foreground="{Binding SelectedAwayTeam.ColorHex}"
+                                   Text="{Binding SelectedAwayTeam.ColorHex}" />
                     </StackPanel>
                 </GroupBox>
 
-                <StackPanel Grid.Row="5">
+                <StackPanel Grid.Row="6">
                     <Label Content="Game duration (minutes)" />
                     <TextBox Text="{Binding GameMinutes, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
-                <StackPanel Grid.Row="5" Grid.Column="1">
+                <StackPanel Grid.Row="6" Grid.Column="1">
                     <Label Content="Shot clock (seconds)" />
                     <TextBox Text="{Binding ShotClockSeconds, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
-                <GroupBox Grid.Row="6"
+                <GroupBox Grid.Row="7"
                           Grid.ColumnSpan="2"
                           Margin="4,14,4,4"
                           Padding="12"
@@ -113,10 +148,10 @@
                             <Label Content="Winner" />
                             <ComboBox SelectedValue="{Binding CoinTossWinner}"
                                       SelectedValuePath="Tag">
-                                <ComboBoxItem Content="{Binding HomeName}"
-                                              Tag="{x:Static models:TeamSide.Home}" />
-                                <ComboBoxItem Content="{Binding AwayName}"
-                                              Tag="{x:Static models:TeamSide.Away}" />
+                                <ComboBoxItem Tag="{x:Static models:TeamSide.Home}"
+                                              Content="{Binding DataContext.SelectedHomeTeam.Name, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                <ComboBoxItem Tag="{x:Static models:TeamSide.Away}"
+                                              Content="{Binding DataContext.SelectedAwayTeam.Name, RelativeSource={RelativeSource AncestorType=Window}}" />
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="8,0,0,0">

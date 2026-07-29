@@ -1,0 +1,255 @@
+<Window x:Class="ThreeByThree.Centar.Scoreboard.Wpf.Views.TournamentManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Tournaments"
+        Width="1100"
+        Height="720"
+        MinWidth="980"
+        MinHeight="640"
+        Background="{StaticResource BlackBrush}"
+        Foreground="{StaticResource WhiteBrush}"
+        FontFamily="{StaticResource AppFontFamily}"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Loaded="OnLoaded">
+    <Window.Resources>
+        <Style x:Key="RosterListStyle" TargetType="{x:Type ListBox}">
+            <Setter Property="Background" Value="{StaticResource PanelRaisedBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource DisabledBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="4" />
+        </Style>
+        <Style x:Key="RosterListItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="6" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                    <Setter Property="Foreground" Value="{StaticResource BlackBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="RequiresTournamentPanelStyle"
+               TargetType="{x:Type Border}">
+            <Setter Property="Visibility" Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedTournament}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="RequiresTeamPanelStyle"
+               TargetType="{x:Type Border}">
+            <Setter Property="Visibility" Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedTeam}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock FontSize="30"
+                   FontWeight="Black"
+                   Text="TOURNAMENTS &amp; ROSTERS" />
+
+        <Grid Grid.Row="1" Margin="0,18,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Margin="0,0,8,0"
+                    Padding="14"
+                    Background="{StaticResource PanelBrush}"
+                    CornerRadius="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="20"
+                               FontWeight="Bold"
+                               Text="TOURNAMENTS" />
+                    <StackPanel Grid.Row="1" Margin="0,10,0,12">
+                        <Label Content="New tournament name" />
+                        <TextBox Text="{Binding NewTournamentName, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Command="{Binding CreateTournamentCommand}"
+                                Content="CREATE TOURNAMENT" />
+                    </StackPanel>
+                    <ListBox Grid.Row="2"
+                             ItemsSource="{Binding Tournaments}"
+                             DisplayMemberPath="Name"
+                             Style="{StaticResource RosterListStyle}"
+                             ItemContainerStyle="{StaticResource RosterListItemStyle}"
+                             SelectedItem="{Binding SelectedTournament}" />
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1"
+                    Margin="8,0"
+                    Padding="14"
+                    Background="{StaticResource PanelBrush}"
+                    CornerRadius="4"
+                    Style="{StaticResource RequiresTournamentPanelStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <TextBlock FontSize="20"
+                                   FontWeight="Bold"
+                                   Text="TEAMS" />
+                        <TextBlock Margin="0,4,0,0"
+                                   Foreground="{StaticResource GreyBrush}"
+                                   Text="{Binding SelectedTournament.Name}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Margin="0,10,0,12">
+                        <Label Content="Team name" />
+                        <TextBox Text="{Binding NewTeamName, UpdateSourceTrigger=PropertyChanged}" />
+                        <Label Content="Team color (#RRGGBB)" />
+                        <TextBox Text="{Binding NewTeamColorHex, UpdateSourceTrigger=PropertyChanged}" />
+                        <Label Content="Team image (optional)" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox IsReadOnly="True"
+                                     Text="{Binding NewTeamImagePath}" />
+                            <Button Grid.Column="1"
+                                    Click="OnChooseTeamImage"
+                                    Content="BROWSE" />
+                        </Grid>
+                        <Button Command="{Binding AddTeamCommand}"
+                                Content="ADD TEAM" />
+                    </StackPanel>
+                    <ListBox Grid.Row="2"
+                             ItemsSource="{Binding SelectedTournament.Teams}"
+                             Style="{StaticResource RosterListStyle}"
+                             ItemContainerStyle="{StaticResource RosterListItemStyle}"
+                             SelectedItem="{Binding SelectedTeam}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="40"
+                                            Height="40"
+                                            Background="{StaticResource PanelRaisedBrush}">
+                                        <Image Source="{Binding ImagePath}"
+                                               Stretch="UniformToFill" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1"
+                                                Margin="10,0,0,0"
+                                                VerticalAlignment="Center">
+                                        <TextBlock FontSize="17"
+                                                   FontWeight="Bold"
+                                                   Text="{Binding Name}" />
+                                        <TextBlock Foreground="{Binding ColorHex}"
+                                                   Text="{Binding ColorHex}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2"
+                    Margin="8,0,0,0"
+                    Padding="14"
+                    Background="{StaticResource PanelBrush}"
+                    CornerRadius="4"
+                    Style="{StaticResource RequiresTeamPanelStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <TextBlock FontSize="20"
+                                   FontWeight="Bold"
+                                   Text="PLAYERS (OPTIONAL)" />
+                        <TextBlock Margin="0,4,0,0"
+                                   Foreground="{StaticResource GreyBrush}"
+                                   Text="{Binding SelectedTeam.Name}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Margin="0,10,0,12">
+                        <Label Content="Player name" />
+                        <TextBox Text="{Binding NewPlayerName, UpdateSourceTrigger=PropertyChanged}" />
+                        <Label Content="Player image (optional)" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox IsReadOnly="True"
+                                     Text="{Binding NewPlayerImagePath}" />
+                            <Button Grid.Column="1"
+                                    Click="OnChoosePlayerImage"
+                                    Content="BROWSE" />
+                        </Grid>
+                        <Button Command="{Binding AddPlayerCommand}"
+                                Content="ADD PLAYER" />
+                    </StackPanel>
+                    <ListBox Grid.Row="2"
+                             ItemsSource="{Binding SelectedTeam.Players}"
+                             Style="{StaticResource RosterListStyle}"
+                             ItemContainerStyle="{StaticResource RosterListItemStyle}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="40"
+                                            Height="40"
+                                            Background="{StaticResource PanelRaisedBrush}">
+                                        <Image Source="{Binding ImagePath}"
+                                               Stretch="UniformToFill" />
+                                    </Border>
+                                    <TextBlock Grid.Column="1"
+                                               Margin="10,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontSize="17"
+                                               Text="{Binding Name}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <DockPanel Grid.Row="2">
+            <Button DockPanel.Dock="Right"
+                    IsDefault="True"
+                    Click="OnClose"
+                    Content="DONE" />
+            <TextBlock Margin="4,0,12,0"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource GreyBrush}"
+                       Text="{Binding StatusMessage}"
+                       TextWrapping="Wrap" />
+        </DockPanel>
+    </Grid>
+</Window>

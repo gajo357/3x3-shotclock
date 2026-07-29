@@ -16,6 +16,10 @@ The application opens two native windows:
   foul penalty thresholds.
 - Coin-toss winner/choice determines the opening possession and reserves the
   opposite choice for a potential overtime.
+- Persistent tournament catalogs with team rosters and optional team/player
+  images; new games select both teams from the tournament.
+- Group, qualifier, quarterfinal, semifinal, and final classifications, with
+  groups 1–20 or A–Z shown beneath the public-display logo.
 - One authoritative event-sourced match session shared by both windows.
 - Drift-resistant monotonic clocks with tenths display and one-shot expiration events.
 - Synchronized game and shot clocks: starting or pausing either applies to both,
@@ -93,11 +97,13 @@ Documents\3x3 Centar Scoreboard\Games\
 
 %LOCALAPPDATA%\3x3 Centar Scoreboard\
 ├── Logs\scoreboard-YYYYMMDD.log
+├── Tournaments\<tournament-id>.json
+├── Tournaments\assets\<tournament-id>\<team-or-player-id>.<extension>
 └── settings.json
 ```
 
 The installer owns only application binaries and shortcuts. It does not remove
-settings, logs, or saved-game JSON during uninstall.
+settings, logs, tournament rosters/images, or saved-game JSON during uninstall.
 
 New installations use the `3x3 Centar Scoreboard` folders. Existing data from
 the previous product name is detected automatically so settings, recovery data,

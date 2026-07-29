@@ -8,7 +8,9 @@ namespace ThreeByThree.Centar.Scoreboard.Wpf.Services;
 
 public interface IControllerDialogService
 {
-    CreateGameCommand? ShowNewGame();
+    CreateGameCommand? ShowNewGame(IReadOnlyList<Tournament> tournaments);
+
+    void ShowTournamentManager();
 
     SavedGameInfo? ShowSavedGames(IReadOnlyList<SavedGameInfo> games);
 

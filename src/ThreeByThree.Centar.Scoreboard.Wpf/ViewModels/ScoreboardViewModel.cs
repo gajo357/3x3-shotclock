@@ -109,7 +109,7 @@ public partial class ScoreboardViewModel : ObservableObject, IDisposable
 
     private void ApplySnapshot(MatchState snapshot)
     {
-        Category = snapshot.Metadata.Category.ToUpperInvariant();
+        Category = snapshot.Metadata.GetGameTypeLabel();
         HomeName = snapshot.Home.Name.ToUpperInvariant();
         AwayName = snapshot.Away.Name.ToUpperInvariant();
         HomeScore = snapshot.Home.Score.ToString(CultureInfo.InvariantCulture);

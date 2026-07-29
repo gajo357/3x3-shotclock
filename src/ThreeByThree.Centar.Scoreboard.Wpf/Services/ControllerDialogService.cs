@@ -6,6 +6,7 @@ using ThreeByThree.Centar.Scoreboard.Application.Display;
 using ThreeByThree.Centar.Scoreboard.Application.Operations;
 using ThreeByThree.Centar.Scoreboard.Application.Persistence;
 using ThreeByThree.Centar.Scoreboard.Application.Settings;
+using ThreeByThree.Centar.Scoreboard.Application.Tournaments;
 using ThreeByThree.Centar.Scoreboard.Domain.Commands;
 using ThreeByThree.Centar.Scoreboard.Domain.Models;
 using ThreeByThree.Centar.Scoreboard.Wpf.ViewModels;
@@ -13,17 +14,29 @@ using ThreeByThree.Centar.Scoreboard.Wpf.Views;
 
 namespace ThreeByThree.Centar.Scoreboard.Wpf.Services;
 
-public sealed class ControllerDialogService(IAudioService audio) : IControllerDialogService
+public sealed class ControllerDialogService(
+    IAudioService audio,
+    ITournamentStore tournamentStore) : IControllerDialogService
 {
-    public CreateGameCommand? ShowNewGame()
+    public CreateGameCommand? ShowNewGame(IReadOnlyList<Tournament> tournaments)
     {
-        var viewModel = new NewGameDialogViewModel();
+        var viewModel = new NewGameDialogViewModel(tournaments);
         var dialog = new NewGameDialog(viewModel)
         {
             Owner = System.Windows.Application.Current.MainWindow,
         };
 
-        return dialog.ShowDialog() == true ? viewModel.BuildCommand() : null;
+        return dialog.ShowDialog() == true ? dialog.Command : null;
+    }
+
+    public void ShowTournamentManager()
+    {
+        var viewModel = new TournamentManagerViewModel(tournamentStore);
+        var dialog = new TournamentManagerWindow(viewModel)
+        {
+            Owner = System.Windows.Application.Current.MainWindow,
+        };
+        dialog.ShowDialog();
     }
 
     public SavedGameInfo? ShowSavedGames(IReadOnlyList<SavedGameInfo> games)

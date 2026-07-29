@@ -7,13 +7,20 @@
 3. Open the application. The controller stays on the primary display; the public scoreboard opens fullscreen on the selected secondary display.
 4. Open **Settings**, select the public display, set volume, test the shot-clock
    buzzer, and choose whether the scoreboard remains topmost.
-5. Select **New Game**, enter teams and event metadata, record the coin-toss
-   winner and whether that team chooses the ball at game start or at a potential
-   overtime, and verify the public display before starting.
+5. Select **Tournaments**, create the tournament, and add at least two teams.
+   Team and player images are optional; players can also be omitted.
+6. Select **New Game**, choose the tournament, home and away teams, game type,
+   and a group from 1–20 or A–Z when applicable. Record the coin-toss winner and
+   whether that team chooses the ball at game start or at a potential overtime,
+   then verify the public display before starting.
 
 ## Main workflow
 
 - **START CLOCKS / PAUSE CLOCKS** always controls the game and shot clocks together.
+- **TOURNAMENTS** manages tournament teams, optional players, and optional
+  uploaded images. Imported images are copied into the application's local data.
+- **NEW GAME** selects teams from the chosen tournament. The game type (and group
+  for group games) appears beneath the 3x3 Centar logo on the public display.
 - `Space`, `G`, and `C` are aliases for the same synchronized clock control.
 - Left-click either score or foul count to add one; right-click to subtract one.
 - Left-click the shot-clock value to add one second; right-click to subtract one.

@@ -6,8 +6,45 @@ namespace ThreeByThree.Centar.Scoreboard.Wpf.ViewModels;
 
 public partial class NewGameDialogViewModel : ObservableObject
 {
+    public NewGameDialogViewModel(IReadOnlyList<Tournament> tournaments)
+    {
+        ArgumentNullException.ThrowIfNull(tournaments);
+        Tournaments = tournaments;
+        Groups = GameGroups.All;
+        SelectedTournament = Tournaments.Count > 0 ? Tournaments[0] : null;
+    }
+
+    public IReadOnlyList<Tournament> Tournaments { get; }
+
+    public IReadOnlyList<GameTypeOption> GameTypes { get; } =
+    [
+        new(GameType.Group, "GROUP"),
+        new(GameType.Qualifier, "QUALIFIER"),
+        new(GameType.Quarterfinal, "QUARTERFINAL"),
+        new(GameType.Semifinal, "SEMIFINAL"),
+        new(GameType.Final, "FINAL"),
+    ];
+
+    public IReadOnlyList<string> Groups { get; }
+
     [ObservableProperty]
-    private string tournamentName = "3x3 Centar";
+    private Tournament? selectedTournament;
+
+    [ObservableProperty]
+    private TournamentTeam? selectedHomeTeam;
+
+    [ObservableProperty]
+    private TournamentTeam? selectedAwayTeam;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsGroupGame))]
+    private GameTypeOption selectedGameType =
+        new(GameType.Group, "GROUP");
+
+    [ObservableProperty]
+    private string selectedGroup = "A";
+
+    public bool IsGroupGame => SelectedGameType.Type == GameType.Group;
 
     [ObservableProperty]
     private string scheduledGameId = string.Empty;
@@ -19,22 +56,10 @@ public partial class NewGameDialogViewModel : ObservableObject
     private string category = string.Empty;
 
     [ObservableProperty]
-    private DateTime? scheduledDate;
+    private DateTime? scheduledDate = DateTime.Today;
 
     [ObservableProperty]
     private string scheduledTime = string.Empty;
-
-    [ObservableProperty]
-    private string homeName = "HOME";
-
-    [ObservableProperty]
-    private string awayName = "AWAY";
-
-    [ObservableProperty]
-    private string homeColorHex = "#FFFFFF";
-
-    [ObservableProperty]
-    private string awayColorHex = "#FF5252";
 
     [ObservableProperty]
     private int gameMinutes = 10;
@@ -48,8 +73,52 @@ public partial class NewGameDialogViewModel : ObservableObject
     [ObservableProperty]
     private CoinTossChoice coinTossSelection = CoinTossChoice.OpeningPossession;
 
-    public CreateGameCommand BuildCommand()
+    public bool TryBuildCommand(
+        out CreateGameCommand? command,
+        out string validationMessage)
     {
+        command = null;
+        if (SelectedTournament is null)
+        {
+            validationMessage = "Select a tournament.";
+            return false;
+        }
+
+        if (SelectedHomeTeam is null || SelectedAwayTeam is null)
+        {
+            validationMessage = "Select both teams.";
+            return false;
+        }
+
+        if (SelectedHomeTeam.Id == SelectedAwayTeam.Id)
+        {
+            validationMessage = "Home and away teams must be different.";
+            return false;
+        }
+
+        if (SelectedGameType.Type == GameType.Group &&
+            !GameGroups.IsValid(SelectedGroup))
+        {
+            validationMessage = "Select a group from 1–20 or A–Z.";
+            return false;
+        }
+
+        command = BuildCommand();
+        validationMessage = string.Empty;
+        return true;
+    }
+
+    partial void OnSelectedTournamentChanged(Tournament? value)
+    {
+        SelectedHomeTeam = value is { Teams.Count: > 0 } ? value.Teams[0] : null;
+        SelectedAwayTeam = value is { Teams.Count: > 1 } ? value.Teams[1] : null;
+    }
+
+    private CreateGameCommand BuildCommand()
+    {
+        var tournament = SelectedTournament!;
+        var home = SelectedHomeTeam!;
+        var away = SelectedAwayTeam!;
         var rules = MatchRules.Fiba3x3 with
         {
             RegularDuration = TimeSpan.FromMinutes(Math.Clamp(GameMinutes, 1, 99)),
@@ -57,14 +126,18 @@ public partial class NewGameDialogViewModel : ObservableObject
             ShotClockTenthsThreshold = TimeSpan.FromSeconds(
                 Math.Min(5, Math.Clamp(ShotClockSeconds, 1, 99))),
         };
-        var scheduledStart = ParseScheduledStart();
         var metadata = new MatchMetadata
         {
-            TournamentName = TournamentName,
+            TournamentId = tournament.Id,
+            TournamentName = tournament.Name,
+            HomeTeamId = home.Id,
+            AwayTeamId = away.Id,
             ScheduledGameId = ScheduledGameId,
             CourtName = CourtName,
             Category = Category,
-            ScheduledStart = scheduledStart,
+            GameType = SelectedGameType.Type,
+            Group = SelectedGameType.Type == GameType.Group ? SelectedGroup : string.Empty,
+            ScheduledStart = ParseScheduledStart(),
             CoinTossWinner = CoinTossWinner,
             CoinTossSelection = CoinTossSelection,
         };
@@ -72,10 +145,10 @@ public partial class NewGameDialogViewModel : ObservableObject
         return new CreateGameCommand(
             metadata,
             rules,
-            HomeName,
-            AwayName,
-            HomeColorHex,
-            AwayColorHex);
+            home.Name,
+            away.Name,
+            home.ColorHex,
+            away.ColorHex);
     }
 
     private DateTimeOffset? ParseScheduledStart()
@@ -101,3 +174,5 @@ public partial class NewGameDialogViewModel : ObservableObject
         return new DateTimeOffset(local);
     }
 }
+
+public sealed record GameTypeOption(GameType Type, string Label);

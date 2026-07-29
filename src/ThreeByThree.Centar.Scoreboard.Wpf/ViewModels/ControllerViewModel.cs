@@ -8,6 +8,7 @@ using ThreeByThree.Centar.Scoreboard.Application;
 using ThreeByThree.Centar.Scoreboard.Application.Display;
 using ThreeByThree.Centar.Scoreboard.Application.Persistence;
 using ThreeByThree.Centar.Scoreboard.Application.Settings;
+using ThreeByThree.Centar.Scoreboard.Application.Tournaments;
 using ThreeByThree.Centar.Scoreboard.Domain;
 using ThreeByThree.Centar.Scoreboard.Domain.Commands;
 using ThreeByThree.Centar.Scoreboard.Domain.Events;
@@ -24,6 +25,7 @@ public partial class ControllerViewModel : ObservableObject, IDisposable
     private readonly IMatchPersistenceService persistence;
     private readonly IAppSettingsService settings;
     private readonly IMonitorService monitors;
+    private readonly ITournamentStore tournaments;
     private bool isDisposed;
 
     public ControllerViewModel(
@@ -32,7 +34,8 @@ public partial class ControllerViewModel : ObservableObject, IDisposable
         IControllerDialogService dialogs,
         IMatchPersistenceService persistence,
         IAppSettingsService settings,
-        IMonitorService monitors)
+        IMonitorService monitors,
+        ITournamentStore tournaments)
     {
         this.session = session;
         this.ticker = ticker;
@@ -40,6 +43,7 @@ public partial class ControllerViewModel : ObservableObject, IDisposable
         this.persistence = persistence;
         this.settings = settings;
         this.monitors = monitors;
+        this.tournaments = tournaments;
         session.SnapshotChanged += OnSnapshotChanged;
         ticker.Tick += OnPresentationTick;
         persistence.StatusChanged += OnPersistenceStatusChanged;
@@ -255,16 +259,39 @@ public partial class ControllerViewModel : ObservableObject, IDisposable
     private void SwapTeams() => Execute(new SwapTeamsCommand());
 
     [RelayCommand]
-    private void NewGame()
+    private async Task NewGame()
     {
-        var command = dialogs.ShowNewGame();
-        if (command is null)
+        try
         {
-            return;
-        }
+            var availableTournaments = await tournaments.ListAsync();
+            if (availableTournaments.Count == 0)
+            {
+                dialogs.ShowTournamentManager();
+                availableTournaments = await tournaments.ListAsync();
+                if (availableTournaments.Count == 0)
+                {
+                    StatusMessage = "Create a tournament before creating a game.";
+                    return;
+                }
+            }
 
-        Execute(command);
+            var command = dialogs.ShowNewGame(availableTournaments);
+            if (command is not null)
+            {
+                Execute(command);
+            }
+        }
+        catch (Exception exception) when (
+            exception is IOException or
+            UnauthorizedAccessException or
+            InvalidDataException)
+        {
+            dialogs.ShowError("New game", exception.Message);
+        }
     }
+
+    [RelayCommand]
+    private void ManageTournaments() => dialogs.ShowTournamentManager();
 
     [RelayCommand]
     private async Task OpenSavedGame()

@@ -76,3 +76,13 @@ public enum BuzzerKind
     ShotClock,
     ShotClockWarning,
 }
+
+public enum GameType
+{
+    Unspecified,
+    Group,
+    Qualifier,
+    Quarterfinal,
+    Semifinal,
+    Final,
+}

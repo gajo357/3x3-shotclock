@@ -9,5 +9,6 @@
     <Project Path="tests/ThreeByThree.Centar.Scoreboard.Application.Tests/ThreeByThree.Centar.Scoreboard.Application.Tests.csproj" />
     <Project Path="tests/ThreeByThree.Centar.Scoreboard.Domain.Tests/ThreeByThree.Centar.Scoreboard.Domain.Tests.csproj" />
     <Project Path="tests/ThreeByThree.Centar.Scoreboard.Infrastructure.Tests/ThreeByThree.Centar.Scoreboard.Infrastructure.Tests.csproj" />
+    <Project Path="tests/ThreeByThree.Centar.Scoreboard.Wpf.Tests/ThreeByThree.Centar.Scoreboard.Wpf.Tests.csproj" />
   </Folder>
 </Solution>

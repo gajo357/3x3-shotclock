@@ -2,7 +2,8 @@ namespace ThreeByThree.Centar.Scoreboard.Infrastructure.Persistence;
 
 public sealed record GameStoragePaths(
     string ActiveDirectory,
-    string CompletedGamesDirectory)
+    string CompletedGamesDirectory,
+    string? TournamentsDirectory = null)
 {
     private const string ProductDataDirectoryName = "3x3 Centar Scoreboard";
     private const string LegacyDataDirectoryName = "3x3 Trebinje Scoreboard";
@@ -18,7 +19,8 @@ public sealed record GameStoragePaths(
 
         return new GameStoragePaths(
             Path.Combine(localDataRoot, "ActiveGame"),
-            Path.Combine(documentsRoot, "Games"));
+            Path.Combine(documentsRoot, "Games"),
+            Path.Combine(localDataRoot, "Tournaments"));
     }
 
     private static string ResolveDataRoot(string parentDirectory)

@@ -10,3 +10,4 @@ artifacts/
 publish/
 installer/output/
 logs/
+.testagent/
