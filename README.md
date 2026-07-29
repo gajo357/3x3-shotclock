@@ -121,3 +121,7 @@ logs, and completed games are not orphaned by the rename.
 3x3 Centar Scoreboard is completely free to download, use, copy, modify,
 and distribute for any purpose, including commercial use. It is released
 under the [Zero-Clause BSD license](LICENSE).
+
+The bundled Squada One and Roboto Condensed typefaces are distributed
+under the SIL Open Font License 1.1. Their license notices are included
+with the [font assets](src/ThreeByThree.Centar.Scoreboard.Wpf/Assets/Fonts).

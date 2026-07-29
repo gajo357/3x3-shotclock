@@ -41,7 +41,17 @@
 
   <ItemGroup>
     <Resource Include="Assets\Branding\3x3logo.png" />
-    <Resource Include="Assets\Fonts\*.otf" />
+    <Resource Include="Assets\Fonts\*.ttf" />
+    <Content Include="Assets\Fonts\SquadaOne-OFL.txt">
+      <Link>licenses\SquadaOne-OFL.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Assets\Fonts\RobotoCondensed-OFL.txt">
+      <Link>licenses\RobotoCondensed-OFL.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
