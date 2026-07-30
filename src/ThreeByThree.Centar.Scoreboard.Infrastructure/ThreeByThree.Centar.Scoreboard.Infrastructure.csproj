@@ -18,6 +18,8 @@
   <ItemGroup>
     <EmbeddedResource Include="..\..\mixkit-basketball-buzzer-1647.wav"
                       LogicalName="ThreeByThree.Centar.Scoreboard.Infrastructure.Assets.Audio.ShotClockBuzzer.wav" />
+    <EmbeddedResource Include="..\ThreeByThree.Centar.Scoreboard.Wpf\Assets\Fonts\UnitedSansReg-Bold.otf"
+                      LogicalName="ThreeByThree.Centar.Scoreboard.Infrastructure.Assets.Fonts.UnitedSansReg-Bold.otf" />
   </ItemGroup>
 
 </Project>

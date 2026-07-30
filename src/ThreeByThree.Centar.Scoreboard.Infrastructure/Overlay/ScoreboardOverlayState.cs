@@ -1,5 +1,6 @@
 using ThreeByThree.Centar.Scoreboard.Domain;
 using ThreeByThree.Centar.Scoreboard.Domain.Models;
+using ThreeByThree.Centar.Scoreboard.Application.Presentation;
 
 namespace ThreeByThree.Centar.Scoreboard.Infrastructure.Overlay;
 
@@ -10,6 +11,8 @@ internal sealed record ScoreboardOverlayState(
     int AwayScore,
     int HomeFouls,
     int AwayFouls,
+    string HomeFoulColorHex,
+    string AwayFoulColorHex,
     string GameClock,
     string ShotClock,
     bool GameClockRunning,
@@ -23,6 +26,8 @@ internal sealed record ScoreboardOverlayState(
             snapshot.Away.Score,
             snapshot.Home.Fouls,
             snapshot.Away.Fouls,
+            FoulDisplayColors.GetColorHex(snapshot.HomePenalty),
+            FoulDisplayColors.GetColorHex(snapshot.AwayPenalty),
             snapshot.Stage == MatchStage.Overtime
                 ? "OT"
                 : ClockDisplayFormatter.FormatGameClock(

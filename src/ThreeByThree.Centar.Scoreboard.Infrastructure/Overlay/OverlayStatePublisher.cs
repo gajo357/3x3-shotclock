@@ -8,7 +8,7 @@ namespace ThreeByThree.Centar.Scoreboard.Infrastructure.Overlay;
 internal sealed class OverlayStatePublisher
 {
     private const string InitialJson =
-        """{"homeTeam":"HOME","awayTeam":"AWAY","homeScore":0,"awayScore":0,"homeFouls":0,"awayFouls":0,"gameClock":"10:00","shotClock":"12","gameClockRunning":false,"shotClockRunning":false}""";
+        """{"homeTeam":"HOME","awayTeam":"AWAY","homeScore":0,"awayScore":0,"homeFouls":0,"awayFouls":0,"homeFoulColorHex":"#FFFFFF","awayFoulColorHex":"#FFFFFF","gameClock":"10:00","shotClock":"12","gameClockRunning":false,"shotClockRunning":false}""";
 
     private static readonly JsonSerializerOptions SerializerOptions =
         new(JsonSerializerDefaults.Web);

@@ -48,9 +48,31 @@ public sealed class ScoreboardOverlayStateTests
         Assert.AreEqual(12, result.AwayScore);
         Assert.AreEqual(7, result.HomeFouls);
         Assert.AreEqual(10, result.AwayFouls);
+        Assert.AreEqual("#FF9800", result.HomeFoulColorHex);
+        Assert.AreEqual("#FF5252", result.AwayFoulColorHex);
         Assert.AreEqual(expectedGameClock, result.GameClock);
         Assert.AreEqual("4.2", result.ShotClock);
         Assert.IsTrue(result.GameClockRunning);
         Assert.IsTrue(result.ShotClockRunning);
+    }
+
+    [TestMethod]
+    [DataRow(0, "#FFFFFF")]
+    [DataRow(6, "#FFFFFF")]
+    [DataRow(7, "#FF9800")]
+    [DataRow(9, "#FF9800")]
+    [DataRow(10, "#FF5252")]
+    public void FromSnapshot_FoulThresholds_MapToScoreboardColors(
+        int fouls,
+        string expectedColor)
+    {
+        var snapshot = MatchState.Empty with
+        {
+            Home = new TeamState { Fouls = fouls },
+        };
+
+        var result = ScoreboardOverlayState.FromSnapshot(snapshot);
+
+        Assert.AreEqual(expectedColor, result.HomeFoulColorHex);
     }
 }

@@ -16,6 +16,8 @@ public sealed class LocalOverlayServer : ILocalOverlayServer, IDisposable
     public const string OverlayUrl = "http://127.0.0.1:5050/overlay";
 
     private const string ListenUrl = "http://127.0.0.1:5050";
+    private const string OverlayFontResourceName =
+        "ThreeByThree.Centar.Scoreboard.Infrastructure.Assets.Fonts.UnitedSansReg-Bold.otf";
     private static readonly TimeSpan ClockPublishInterval = TimeSpan.FromMilliseconds(100);
 
     private readonly MatchSession session;
@@ -164,6 +166,7 @@ public sealed class LocalOverlayServer : ILocalOverlayServer, IDisposable
             () => Results.Content(
                 OverlayPage.Html,
                 "text/html; charset=utf-8"));
+        app.MapGet("/assets/united-sans-reg-bold.otf", WriteOverlayFontAsync);
         app.MapGet("/events", StreamEventsAsync);
 
         await app.StartAsync(cancellationToken).ConfigureAwait(false);
@@ -224,6 +227,21 @@ public sealed class LocalOverlayServer : ILocalOverlayServer, IDisposable
                 removed.Writer.TryComplete();
             }
         }
+    }
+
+    private static async Task WriteOverlayFontAsync(HttpContext context)
+    {
+        await using var font = typeof(LocalOverlayServer)
+            .Assembly
+            .GetManifestResourceStream(OverlayFontResourceName)
+            ?? throw new InvalidOperationException(
+                "The embedded United Sans Reg overlay font was not found.");
+
+        context.Response.ContentType = "font/otf";
+        context.Response.ContentLength = font.Length;
+        context.Response.Headers.CacheControl = "public, max-age=86400";
+        await font.CopyToAsync(context.Response.Body, context.RequestAborted)
+            .ConfigureAwait(false);
     }
 
     private void PublishToClients(string json)

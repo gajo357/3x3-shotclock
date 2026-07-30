@@ -10,13 +10,21 @@ internal static class OverlayPage
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3x3 Centar Scoreboard Overlay</title>
     <style>
+        @font-face {
+            font-family: "United Sans Reg";
+            src: url("/assets/united-sans-reg-bold.otf") format("opentype");
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+        }
+
         html, body {
             width: 100%;
             height: 100%;
             margin: 0;
             overflow: hidden;
             background: transparent;
-            font-family: Arial, sans-serif;
+            font-family: "United Sans Reg", "Arial Narrow", sans-serif;
         }
 
         .scoreboard {
@@ -25,20 +33,26 @@ internal static class OverlayPage
             bottom: 55px;
             transform: translateX(-50%);
             display: grid;
-            grid-template-columns: 260px 90px 150px 90px 260px;
+            grid-template-columns: 250px 92px 170px 92px 250px;
+            column-gap: 14px;
             align-items: center;
-            min-height: 90px;
-            padding: 10px 18px;
+            min-height: 112px;
+            padding: 12px 20px;
             box-sizing: border-box;
             color: white;
             background: rgba(10, 10, 14, 0.94);
-            border-radius: 12px;
+            border-radius: 4px;
+        }
+
+        .team-details {
+            min-width: 0;
         }
 
         .team {
             overflow: hidden;
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 700;
+            line-height: 1;
             text-overflow: ellipsis;
             text-transform: uppercase;
             white-space: nowrap;
@@ -49,9 +63,17 @@ internal static class OverlayPage
             text-align: right;
         }
 
-        .score {
-            font-size: 46px;
-            font-weight: 900;
+        .score-box {
+            display: grid;
+            width: 84px;
+            height: 84px;
+            place-items: center;
+            border: 3px solid #ffffff;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 58px;
+            font-weight: 700;
+            line-height: 1;
             text-align: center;
         }
 
@@ -60,37 +82,72 @@ internal static class OverlayPage
         }
 
         .game-clock {
-            font-size: 34px;
-            font-weight: 800;
+            font-size: 38px;
+            font-weight: 700;
+            line-height: 1;
         }
 
         .shot-clock {
-            font-size: 22px;
-            font-weight: 800;
+            margin-top: 5px;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
         }
 
-        .fouls {
-            margin-top: 4px;
-            font-size: 15px;
-            opacity: 0.8;
+        .foul-details {
+            --foul-color: #ffffff;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 9px;
+            color: var(--foul-color);
+        }
+
+        .away-details .foul-details {
+            flex-direction: row-reverse;
+        }
+
+        .foul-label {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .foul-box {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border: 2px solid currentColor;
+            border-radius: 2px;
+            box-sizing: border-box;
+            font-size: 27px;
+            font-weight: 700;
+            line-height: 1;
         }
     </style>
 </head>
 <body>
     <div class="scoreboard">
-        <div>
+        <div class="team-details">
             <div id="homeTeam" class="team">HOME</div>
-            <div class="fouls">Fouls: <span id="homeFouls">0</span></div>
+            <div id="homeFoulDetails" class="foul-details">
+                <span class="foul-label">FOULS</span>
+                <span class="foul-box"><span id="homeFouls">0</span></span>
+            </div>
         </div>
-        <div id="homeScore" class="score">0</div>
+        <div id="homeScore" class="score-box">0</div>
         <div class="clocks">
             <div id="gameClock" class="game-clock">10:00</div>
             <div id="shotClock" class="shot-clock">12</div>
         </div>
-        <div id="awayScore" class="score">0</div>
-        <div class="away-details">
+        <div id="awayScore" class="score-box">0</div>
+        <div class="team-details away-details">
             <div id="awayTeam" class="team away">AWAY</div>
-            <div class="fouls">Fouls: <span id="awayFouls">0</span></div>
+            <div id="awayFoulDetails" class="foul-details">
+                <span class="foul-label">FOULS</span>
+                <span class="foul-box"><span id="awayFouls">0</span></span>
+            </div>
         </div>
     </div>
 
@@ -104,6 +161,12 @@ internal static class OverlayPage
             document.getElementById("awayFouls").textContent = state.awayFouls;
             document.getElementById("gameClock").textContent = state.gameClock;
             document.getElementById("shotClock").textContent = state.shotClock;
+            document.getElementById("homeFoulDetails").style.setProperty(
+                "--foul-color",
+                state.homeFoulColorHex || "#FFFFFF");
+            document.getElementById("awayFoulDetails").style.setProperty(
+                "--foul-color",
+                state.awayFoulColorHex || "#FFFFFF");
         }
 
         async function start() {
