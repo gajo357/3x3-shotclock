@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="..\..\mixkit-basketball-buzzer-1647.wav"
                       LogicalName="ThreeByThree.Centar.Scoreboard.Infrastructure.Assets.Audio.ShotClockBuzzer.wav" />
   </ItemGroup>

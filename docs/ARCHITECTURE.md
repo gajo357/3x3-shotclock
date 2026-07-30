@@ -25,6 +25,9 @@ flowchart LR
     Events --> Session["MatchSession + clock anchors"]
     Session --> Queue["Non-blocking event delta queue"]
     Queue --> Store["Ordered background JSON journal"]
+    Session --> OverlayQueue["Bounded latest-state queue"]
+    OverlayQueue --> Overlay["Background JSON + local SSE"]
+    Overlay --> OBS["OBS browser source"]
     Session --> Controller["ControllerViewModel"]
     Session --> Public["ScoreboardViewModel"]
     Events --> Operations["Audio · power · diagnostics"]
@@ -90,3 +93,10 @@ are under Program Files; user data is never an installer component.
   and disk I/O off the UI thread and retain per-match write order.
 - The persistence event handler only copies the newly committed event batch and
   performs a non-blocking channel write.
+- The local OBS publisher performs only a non-blocking `TryWrite` from match
+  notifications. A capacity-one background queue coalesces obsolete display
+  states, while JSON serialization, 10 Hz running-clock sampling, Kestrel, and
+  each SSE client run independently of both scoreboard windows.
+- Slow or disconnected overlay clients cannot create backpressure: every client
+  has its own capacity-one latest-state queue, and overlay startup/delivery
+  failures are logged without affecting match operation.

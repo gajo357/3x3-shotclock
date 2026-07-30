@@ -15,6 +15,7 @@
         <Grid Width="1920"
               Height="1080"
               Background="{StaticResource BlackBrush}"
+              TextElement.FontFamily="{StaticResource ScoreboardFontFamily}"
               TextElement.Foreground="{StaticResource WhiteBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="180" />
@@ -66,7 +67,6 @@
                 <TextBlock Margin="36,0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                            FontSize="58"
                            FontWeight="Black"
                            Text="{Binding HomeName}"
@@ -76,7 +76,6 @@
                            Margin="36,0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                            FontSize="58"
                            FontWeight="Black"
                            Text="{Binding AwayName}"
@@ -90,7 +89,6 @@
                         CornerRadius="4">
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                                FontSize="270"
                                FontWeight="Black"
                                LineHeight="280"
@@ -109,7 +107,6 @@
                     </Grid.RowDefinitions>
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Bottom"
-                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="30"
                                FontWeight="SemiBold"
                                Foreground="{StaticResource GreyBrush}"
@@ -117,9 +114,8 @@
                     <TextBlock Grid.Row="1"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="164"
-                               FontWeight="Bold"
+                               FontWeight="Black"
                                Text="{Binding GameClock}"
                                TextAlignment="Center" />
                 </Grid>
@@ -132,7 +128,6 @@
                         CornerRadius="4">
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               FontFamily="{StaticResource ScoreboardScoreFontFamily}"
                                FontSize="270"
                                FontWeight="Black"
                                LineHeight="280"
@@ -148,7 +143,6 @@
                             Margin="36,18,36,0"
                             HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center"
-                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="30"
                                FontWeight="SemiBold"
                                Foreground="{Binding HomeFoulColorHex}"
@@ -162,9 +156,8 @@
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Foreground="{Binding HomeFoulColorHex}"
-                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="74"
-                                   FontWeight="Bold"
+                                   FontWeight="Black"
                                    Text="{Binding HomeFouls}"
                                    TextAlignment="Center">
                             <TextBlock.RenderTransform>
@@ -190,7 +183,6 @@
                         </Grid.RowDefinitions>
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Bottom"
-                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="30"
                                    FontWeight="Bold"
                                    Foreground="Black"
@@ -198,9 +190,8 @@
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="122"
-                                   FontWeight="Bold"
+                                   FontWeight="Black"
                                    Foreground="Black"
                                    Text="{Binding ShotClock}"
                                    TextAlignment="Center" />
@@ -212,7 +203,6 @@
                             Margin="36,18,36,0"
                             HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center"
-                               FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                FontSize="30"
                                FontWeight="SemiBold"
                                Foreground="{Binding AwayFoulColorHex}"
@@ -226,9 +216,8 @@
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Foreground="{Binding AwayFoulColorHex}"
-                                   FontFamily="{StaticResource ScoreboardTimingFontFamily}"
                                    FontSize="74"
-                                   FontWeight="Bold"
+                                   FontWeight="Black"
                                    Text="{Binding AwayFouls}"
                                    TextAlignment="Center">
                             <TextBlock.RenderTransform>

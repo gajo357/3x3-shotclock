@@ -6,12 +6,14 @@ using Microsoft.Extensions.Hosting;
 using ThreeByThree.Centar.Scoreboard.Application;
 using ThreeByThree.Centar.Scoreboard.Application.Display;
 using ThreeByThree.Centar.Scoreboard.Application.Operations;
+using ThreeByThree.Centar.Scoreboard.Application.Overlay;
 using ThreeByThree.Centar.Scoreboard.Application.Persistence;
 using ThreeByThree.Centar.Scoreboard.Application.Settings;
 using ThreeByThree.Centar.Scoreboard.Application.Tournaments;
 using ThreeByThree.Centar.Scoreboard.Domain;
 using ThreeByThree.Centar.Scoreboard.Infrastructure.Diagnostics;
 using ThreeByThree.Centar.Scoreboard.Infrastructure.Operations;
+using ThreeByThree.Centar.Scoreboard.Infrastructure.Overlay;
 using ThreeByThree.Centar.Scoreboard.Infrastructure.Persistence;
 using ThreeByThree.Centar.Scoreboard.Infrastructure.Settings;
 using ThreeByThree.Centar.Scoreboard.Infrastructure.Windows;
@@ -33,6 +35,7 @@ public partial class App : System.Windows.Application
         @"Local\ThreeByThree.Centar.Scoreboard.9D8A3F59-0BE6-4B4B-B2E6-95F66E31A5E4";
     private IMatchPersistenceService? persistence;
     private IMatchOperationalService? operations;
+    private ILocalOverlayServer? overlayServer;
     private IAppLog? appLog;
     private Mutex? singleInstanceMutex;
     private bool ownsSingleInstanceMutex;
@@ -55,6 +58,7 @@ public partial class App : System.Windows.Application
             services.AddSingleton<IPowerManagementService, PowerManagementService>();
             services.AddSingleton<IAppLog, FileAppLog>();
             services.AddSingleton<IMatchOperationalService, MatchOperationalService>();
+            services.AddSingleton<ILocalOverlayServer, LocalOverlayServer>();
             services.AddSingleton<IControllerDialogService, ControllerDialogService>();
             services.AddSingleton<ControllerViewModel>();
             services.AddSingleton<ScoreboardViewModel>();
@@ -110,6 +114,9 @@ public partial class App : System.Windows.Application
         await RecoverActiveGameAsync(persistence);
         persistence.Start();
 
+        overlayServer = _host.Services.GetRequiredService<ILocalOverlayServer>();
+        overlayServer.Start();
+
         var controller = _host.Services.GetRequiredService<ControllerWindow>();
         MainWindow = controller;
         controller.Show();
@@ -123,6 +130,11 @@ public partial class App : System.Windows.Application
         DispatcherUnhandledException -= OnDispatcherUnhandledException;
         AppDomain.CurrentDomain.UnhandledException -= OnDomainUnhandledException;
         TaskScheduler.UnobservedTaskException -= OnUnobservedTaskException;
+
+        if (overlayServer is not null)
+        {
+            await overlayServer.StopAsync();
+        }
 
         if (persistence is not null)
         {

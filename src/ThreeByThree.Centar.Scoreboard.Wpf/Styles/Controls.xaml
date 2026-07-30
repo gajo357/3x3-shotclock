@@ -1,8 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <FontFamily x:Key="AppFontFamily">../Assets/Fonts/#Roboto Condensed</FontFamily>
-    <FontFamily x:Key="ScoreboardScoreFontFamily">../Assets/Fonts/#Saira</FontFamily>
-    <FontFamily x:Key="ScoreboardTimingFontFamily">../Assets/Fonts/#Rajdhani</FontFamily>
+    <FontFamily x:Key="ScoreboardFontFamily">../Assets/Fonts/#United Sans Reg</FontFamily>
 
     <Style TargetType="Window">
         <Setter Property="Background" Value="{StaticResource BlackBrush}" />

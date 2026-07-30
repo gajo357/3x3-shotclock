@@ -31,6 +31,9 @@ The application opens two native windows:
 - Responsive 720p/1080p/4K public display, blackout, fullscreen, monitor selection, hot-plug fallback, and DPI-aware placement.
 - Every committed game action is queued into an ordered background JSON journal;
   atomic replacement and one-second running-clock snapshots keep crash recovery current.
+- A loopback-only OBS browser overlay at `http://127.0.0.1:5050/overlay` receives
+  coalesced scoreboard state through background SSE publishing; slow clients,
+  serialization, and server failures never block match operation.
 - A newest-first Saved Games library can reopen finished matches on their final
   screen or recover unfinished matches paused so play can continue.
 - Manual JSON export and full event history.
@@ -122,6 +125,6 @@ logs, and completed games are not orphaned by the rename.
 and distribute for any purpose, including commercial use. It is released
 under the [Zero-Clause BSD license](LICENSE).
 
-The bundled Saira, Rajdhani, and Roboto Condensed typefaces are distributed
-under the SIL Open Font License 1.1. Their license notices are included
-with the [font assets](src/ThreeByThree.Centar.Scoreboard.Wpf/Assets/Fonts).
+The bundled Roboto Condensed typeface is distributed under the SIL Open Font
+License 1.1. Its license notice is included with the
+[font assets](src/ThreeByThree.Centar.Scoreboard.Wpf/Assets/Fonts).
