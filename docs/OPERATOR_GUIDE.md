@@ -16,7 +16,8 @@
 
 ## Main workflow
 
-- **START CLOCKS / PAUSE CLOCKS** always controls the game and shot clocks together.
+- **START CLOCKS / PAUSE CLOCKS** controls both clocks during regulation and
+  only the shot clock during overtime; the game clock remains stopped at `OT`.
 - **TOURNAMENTS** manages tournament teams, optional players, and optional
   uploaded images. Imported images are copied into the application's local data.
 - **NEW GAME** selects teams from the chosen tournament. The game type (and group
@@ -54,9 +55,9 @@ Keyboard shortcuts are ignored while editing a text field.
 
 | Key | Action |
 |---|---|
-| `Space` | Start/pause both clocks |
-| `G` | Start/pause both clocks |
-| `C` | Start/pause both clocks |
+| `Space` | Start/pause both clocks in regulation; shot clock in overtime |
+| `G` | Start/pause both clocks in regulation; shot clock in overtime |
+| `C` | Start/pause both clocks in regulation; shot clock in overtime |
 | `R` | Reset shot clock and preserve running state |
 | `Shift+R` | Reset shot clock and pause both clocks |
 | `[` / `]` | Game clock −1 / +1 second |

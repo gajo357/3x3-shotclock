@@ -601,6 +601,55 @@ public sealed class MatchEngineTests
     }
 
     [TestMethod]
+    public void Execute_SetLinkedClocksRunningInOvertime_ControlsOnlyShotClock()
+    {
+        var scenario = Scenario.InOvertime();
+
+        var started = scenario.Execute(
+            new SetLinkedClocksRunningCommand(true, CommandSource.Keyboard));
+        var duplicateStart = scenario.Execute(new SetLinkedClocksRunningCommand(true));
+        var paused = scenario.Execute(new SetLinkedClocksRunningCommand(false));
+        var duplicatePause = scenario.Execute(new SetLinkedClocksRunningCommand(false));
+
+        Assert.IsTrue(started.IsAccepted);
+        Assert.HasCount(1, started.Events);
+        var shotStarted = Assert.IsInstanceOfType<ClockChangedEvent>(started.Events[0]);
+        Assert.AreEqual(ClockKind.Shot, shotStarted.Clock);
+        Assert.AreEqual(ClockOperation.Started, shotStarted.Operation);
+        Assert.AreEqual(CommandSource.Keyboard, shotStarted.Metadata.Source);
+        Assert.AreEqual(TimeSpan.Zero, started.State.GameClock.Remaining);
+        Assert.IsFalse(started.State.GameClock.IsRunning);
+        Assert.IsTrue(started.State.ShotClock.IsRunning);
+        Assert.IsFalse(duplicateStart.IsAccepted);
+        Assert.AreEqual("The shot clock is already running.", duplicateStart.Message);
+        Assert.IsTrue(paused.IsAccepted);
+        Assert.HasCount(1, paused.Events);
+        var shotPaused = Assert.IsInstanceOfType<ClockChangedEvent>(paused.Events[0]);
+        Assert.AreEqual(ClockKind.Shot, shotPaused.Clock);
+        Assert.AreEqual(ClockOperation.Paused, shotPaused.Operation);
+        Assert.IsFalse(paused.State.GameClock.IsRunning);
+        Assert.IsFalse(paused.State.ShotClock.IsRunning);
+        Assert.IsFalse(duplicatePause.IsAccepted);
+        Assert.AreEqual("The shot clock is paused.", duplicatePause.Message);
+    }
+
+    [TestMethod]
+    public void Execute_StartOvertimePlayWithShotClockAtZero_RejectsStart()
+    {
+        var scenario = Scenario.InOvertime();
+        scenario.Execute(new SetClockCommand(ClockKind.Shot, TimeSpan.Zero, Stop: true));
+
+        var result = scenario.Execute(new SetLinkedClocksRunningCommand(true));
+
+        Assert.IsFalse(result.IsAccepted);
+        Assert.AreEqual("Reset the shot clock before starting overtime play.", result.Message);
+        Assert.AreEqual(TimeSpan.Zero, result.State.GameClock.Remaining);
+        Assert.IsFalse(result.State.GameClock.IsRunning);
+        Assert.AreEqual(TimeSpan.Zero, result.State.ShotClock.Remaining);
+        Assert.IsFalse(result.State.ShotClock.IsRunning);
+    }
+
+    [TestMethod]
     public void Execute_StartClockAtZero_RejectsUntilClockIsReset()
     {
         var scenario = Scenario.Created();

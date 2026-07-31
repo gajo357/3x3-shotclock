@@ -327,22 +327,29 @@ public sealed class MatchEngine
             return CommandResult.Reject(state, rejection);
         }
 
+        var controlsGameClock = state.Stage != MatchStage.Overtime;
         if (command.IsRunning &&
-            (state.GameClock.Remaining <= TimeSpan.Zero ||
+            ((controlsGameClock && state.GameClock.Remaining <= TimeSpan.Zero) ||
              state.ShotClock.Remaining <= TimeSpan.Zero))
         {
             return CommandResult.Reject(
                 state,
-                "Reset any clock at zero before starting linked clocks.");
+                controlsGameClock
+                    ? "Reset any clock at zero before starting linked clocks."
+                    : "Reset the shot clock before starting overtime play.");
         }
 
         var events = new List<MatchEvent>();
-        AddRunningEvent(
-            state.GameClock,
-            ClockKind.Game,
-            command.IsRunning,
-            createMetadata,
-            events);
+        if (controlsGameClock)
+        {
+            AddRunningEvent(
+                state.GameClock,
+                ClockKind.Game,
+                command.IsRunning,
+                createMetadata,
+                events);
+        }
+
         AddRunningEvent(
             state.ShotClock,
             ClockKind.Shot,
@@ -353,7 +360,13 @@ public sealed class MatchEngine
         return events.Count == 0
             ? CommandResult.Reject(
                 state,
-                command.IsRunning ? "Both clocks are already running." : "Both clocks are paused.")
+                controlsGameClock
+                    ? command.IsRunning
+                        ? "Both clocks are already running."
+                        : "Both clocks are paused."
+                    : command.IsRunning
+                        ? "The shot clock is already running."
+                        : "The shot clock is paused.")
             : Accept(history, events);
     }
 

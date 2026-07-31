@@ -307,6 +307,53 @@ public sealed class MatchSessionTests
     }
 
     [TestMethod]
+    public void Execute_OvertimeShotClock_RunsAndExpiresWithoutStartingGameClock()
+    {
+        var timeProvider = new FakeTimeProvider(Start);
+        var rules = MatchRules.Fiba3x3 with
+        {
+            RegularDuration = TimeSpan.FromSeconds(1),
+            GameClockTenthsThreshold = TimeSpan.FromSeconds(1),
+        };
+        using var session = CreateStartedSession(timeProvider, rules);
+        timeProvider.Advance(TimeSpan.FromSeconds(1));
+
+        var overtime = session.Execute(new StartOvertimeCommand());
+        var started = session.Execute(new SetLinkedClocksRunningCommand(true));
+        timeProvider.Advance(TimeSpan.FromSeconds(7));
+        var atWarning = session.Snapshot;
+        timeProvider.Advance(TimeSpan.FromSeconds(5));
+        var expired = session.Snapshot;
+        var eventCountAfterExpiration = session.History.Count;
+        timeProvider.Advance(TimeSpan.FromSeconds(10));
+
+        Assert.IsTrue(overtime.IsAccepted);
+        Assert.IsTrue(started.IsAccepted);
+        Assert.HasCount(1, started.Events);
+        var startedEvent = Assert.IsInstanceOfType<ClockChangedEvent>(started.Events[0]);
+        Assert.AreEqual(ClockKind.Shot, startedEvent.Clock);
+        Assert.AreEqual(TimeSpan.Zero, atWarning.GameClock.Remaining);
+        Assert.IsFalse(atWarning.GameClock.IsRunning);
+        Assert.AreEqual(TimeSpan.FromSeconds(5), atWarning.ShotClock.Remaining);
+        Assert.IsTrue(atWarning.ShotClock.IsRunning);
+        Assert.AreEqual(TimeSpan.Zero, expired.GameClock.Remaining);
+        Assert.IsFalse(expired.GameClock.IsRunning);
+        Assert.AreEqual(TimeSpan.Zero, expired.ShotClock.Remaining);
+        Assert.IsFalse(expired.ShotClock.IsRunning);
+        Assert.IsTrue(expired.ShotClock.HasExpired);
+        Assert.HasCount(1, session.History.OfType<BuzzerTriggeredEvent>()
+            .Where(matchEvent => matchEvent.Buzzer == BuzzerKind.ShotClockWarning)
+            .ToArray());
+        Assert.HasCount(1, session.History.OfType<ClockExpiredEvent>()
+            .Where(matchEvent => matchEvent.Clock == ClockKind.Shot)
+            .ToArray());
+        Assert.HasCount(1, session.History.OfType<BuzzerTriggeredEvent>()
+            .Where(matchEvent => matchEvent.Buzzer == BuzzerKind.ShotClock)
+            .ToArray());
+        Assert.HasCount(eventCountAfterExpiration, session.History);
+    }
+
+    [TestMethod]
     public void Execute_ResetRunningShotClock_ReschedulesExpirationFromResetValue()
     {
         var timeProvider = new FakeTimeProvider(Start);

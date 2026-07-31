@@ -33,15 +33,17 @@ Perform these checks on the exact tournament laptop, HDMI chain, display, and au
 - [ ] Confirm blackout and F11 work without moving controller focus.
 - [ ] Confirm score, foul, and shot-clock values increase on left-click and decrease on right-click.
 - [ ] Confirm all six compact game-clock adjustment buttons work.
-- [ ] Confirm `Space`, `G`, `C`, and the controller clock button always start or
-  pause both clocks together.
+- [ ] Confirm `Space`, `G`, `C`, and the controller clock button start or pause
+  both clocks in regulation and only the shot clock in overtime while the game
+  clock remains stopped at `OT`.
 - [ ] Confirm a normal shot-clock reset preserves the shared running state and
   does not change the game-clock value.
 - [ ] Confirm shot-clock expiration and **RESET SHOT + PAUSE** stop both clocks.
 - [ ] Route Windows default audio to HDMI/venue output and confirm the manual,
   game-clock, shot-clock expiry, and five-second warning patterns.
 - [ ] Run a complete regulation game including resets, adjustments, penalties, winning alert, and finalization.
-- [ ] Run a tied regulation game through overtime.
+- [ ] Run a tied regulation game through overtime, including shot-clock start,
+  pause, warning, reset, and expiration.
 - [ ] Create a tournament, add at least two teams, and verify it remains available after restarting the app.
 - [ ] Add teams and players with a mix of present and omitted images; verify imported images and roster ownership after restarting.
 - [ ] Create games by selecting tournament teams for every game type. Verify numeric group `1`/`20`, alphabetic group `A`/`Z`, and the type/group label beneath the public-display logo.

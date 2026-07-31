@@ -22,8 +22,9 @@ The application opens two native windows:
   groups 1–20 or A–Z shown beneath the public-display logo.
 - One authoritative event-sourced match session shared by both windows.
 - Drift-resistant monotonic clocks with tenths display and one-shot expiration events.
-- Synchronized game and shot clocks: starting or pausing either applies to both,
-  while shot-clock reset leaves the game-clock value unchanged.
+- Synchronized regulation clocks: starting or pausing either applies to both;
+  in overtime, the same controls run only the shot clock while the game clock
+  displays `OT`.
 - Button and keyboard control through the same MVVM commands.
 - Undo by appending `EventRevertedEvent`; history is never deleted.
 - Automatic five-second shot-clock warning and recorded expiry buzzer,
